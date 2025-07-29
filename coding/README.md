@@ -1,10 +1,5 @@
 ## Navigation: Coding Patterns Index
-
-### Getting Started
-
-* [getting\_started](src/main/java/com/personal/educative/getting_started)
-
----
+#### This document provides an overview of the coding patterns and their respective implementations in the project. Each pattern is organized into a specific folder for easy navigation.
 
 ### Core Patterns
 
@@ -74,7 +69,7 @@
 | Matrices           | [matrices](src/main/java/com/personal/educative/matrices)                      |
 | Math and Geometry  | [math\_and\_geometry](src/main/java/com/personal/educative/math_and_geometry)  |
 | Challenge Yourself | [challenge\_yourself](src/main/java/com/personal/educative/challenge_yourself) |
-| Conclusion         | [conclusion](src/main/java/com/personal/educative/conclusion) *(optional)*     |
+
 
 ---
 
