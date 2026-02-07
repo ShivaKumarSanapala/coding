@@ -435,3 +435,337 @@
 [11:26:10] It's warm in here.
 [11:27:10] for watching.
 [11:27:24] Yeah.
+[11:30:32] Oh.
+[11:31:44] Okay, welcome back. Shall we start?
+[11:32:19] Okay, so next one is model subclassing.
+[11:32:33] are the names.
+[11:32:43] indicates models of classing in the sense, we define the architecture separately.
+[11:33:02] And then we'll ask the user, user one can use it, or user two can use it, or user three can use it. For example, in an organization when you're working, I want to
+[11:33:27] So generally what I will do as an architect, I'm going to build the architecture diagram, then I'm going to build the data flow diagram. Now a group of people like a team one, team two, team three, they will take this architecture and data flow diagram, they will write different approaches, they will take it right. So whichever team is doing the best approach
+[11:33:54] whichever team is giving me the best accuracy that team POC will be taken and then we'll move on to the production. So generally in MNCs we do like that only. Similar here what we are doing as an architect I am going to define the architecture what architecture in the sense what that can be CNN or that can be RNN that can be an LSTM that it can be a transformer architecture anything I'm defining okay with number of layers number
+[11:34:27] of neurons and everything and the user need to use it and then he need to just call the architecture and use it. So architecture is in separate file, implementation will be in the separate file. In the sequential what we are doing, we are adding sequence of layers, right? So whereas in functional what we are doing, we are passing as the links. Now we are separating the architecture completely and the user is going to import the architecture and he's going to
+[11:35:00] use the architecture. Understood? So what is the basic difference between, for example, the functional and the model subclassing? So here we can say that the model subclassing, we have the full control. That means we can define what are the layers and what is the forward pass and we can, for example, we want to separate the custom logic from the architecture and the logic is custom logic is most of the time changing in that situation. then we can go with the model subclassing.
+[11:35:31] So first we just state and the model and for example, action. So here what we are trying to do is, and the custom logic we are trying to separate, and then the architecture is separate. So why do we use this one? We know that as a model flexibility, we can use it. And best for example, if you are doing some experimental kind of experimentation or research kind of thing, then we can go with the model subclassing, okay? So let us take and
+[11:35:45] Let me stop this runtime. This one also. First of all, let me create a simple file.
+[11:35:56] architecture, something I'm defining.
+[11:36:05] me share this notebook with you.
+[11:36:16] Okay, sorry, can you share the notebook? Ram, do you got the?
+[11:36:27] notebook or you wanted to share the previous notebook cells.
+[11:36:37] I'm audible, okay? Yes, we got that.
+[11:36:46] Let me import TensorFlow as tf.
+[11:36:57] Then from Keras, in total years, in Bota,
+[11:37:06] and input. Now class, sample for example.
+[11:37:16] keras.model. So which is in writing the
+[11:37:29] properties of the Keraski model. So first of all, let us define the init function.
+[11:37:40] So super, which is a sample, edit function calling.
+[11:37:54] Now let us define here self.L1, first layer. In the first layer, what do we have? Dense. How many neurons?
+[11:38:10] we have? 8 neurons. What is activation? Is the ReLU. In L2, we have how many? 10 neurons. Activation is ReLU. Then self.L3,
+[11:38:25] then how many neurons we have 10 neurons activation is relu then finally the dot l4
+[11:38:38] dense. Activation is tree. What is activation? Softness. Now I'll define one function.
+[11:38:50] which is going to take the self and inputs. So first of all x1 will be
+[11:39:03] self dot l1 which is going to pass the inputs x2 will be self dot l2 passing x2 x3 is done then finally
+[11:39:17] I want to return self.L4 with x3. This is a simple class I defined. So where is the architecture now? In the architecture.
+[11:39:30] file we have in architecture, correct? So let us download the file in py format, okay? Now I'll open
+[11:39:40] another file let me stop this runtime
+[11:39:51] okay so what is the name here model subclassing yeah
+[11:40:03] I am on 26B. Okay, so on 26B, let us see. 26B, okay. Okay, let me first...
+[11:40:16] upload the file. This is architecture.py, right? Okay. So I have architecture.py. Now what should I do?
+[11:40:30] Now I need to import it. So how can I import? I can say from. What is the file name? Architecture.
+[11:40:43] What is the class name? Sample, right? Class name is Sample. So I'm putting that. So I just uploaded architecture.py file, then
+[11:40:57] import sample. So inside the architecture, we have a class called as a sample. I'm importing that data. Now let us take the same from
+[11:41:08] scaleon.datasets import load underscore iris from scaleon
+[11:41:20] sklearn.model__selection import train__test__select from sklearn
+[11:41:30] on dot preprocessing, import, standard scalar,
+[11:41:41] from deras.utils import which one to underscore categorical and
+[11:41:52] from kros.layers import which are made import, right? Okay.
+[11:42:03] This is basically important. Then define iris is equal load underscore
+[11:42:13] The next will be iris of data.
+[11:42:24] Y will be Iris of target. Then directly I am converting.
+[11:42:39] because it is a multi-class classification and not converted. How do you convert? y is equal to underscore categorical of what? y. Done. This step is done. Then we need to create object of a scalar.
+[11:42:53] A is equal to standard scalar, then we can do. Okay, so before that, let us split the data. X and the scope train.
+[11:43:05] then x underscore test then y underscore train y test display it is 0.2 then random state will be 42.
+[11:43:16] For example, and then here we have some discord train is equal scalar.
+[11:43:27] dot bit underscore transform, the next is done. Okay, so
+[11:43:41] Then we got the, but now we need to find inputs. Now tell me how many features we have? In iris data, how many features we have?
+[11:43:54] inputs is set for done. Now I create an object. For example, object is model is equal. Here, what is the
+[11:44:07] class name sample, right? In the sample, I create object. Okay, I got the object of a sample class.
+[11:44:22] Last, we have a function. What is the function name? Call. So how can I call? model.call. It need a parameter, right? Which parameters I'm giving?
+[11:44:34] giving it as a input parameters now done okay so now when you say model dot summary you see model build right here I didn't mention
+[11:44:49] what is the inputs and outputs and everything, where they are, they're all here, correct? So I just imported the model and then I used it, perfect.
+[11:45:07] This is a basic difference, correct? Now after that, compiling model.compile, because already we built the model. How do we compile? Optimizer is the item, loss is categorical, accuracy done. Then after that, model.compile.
+[11:45:21] we can say x underscore train then y underscore train okay then we can define the epochs is equal to 100 and the batch size is equal to 500
+[11:45:30] What are the parameters?
+[11:45:40] Now we can say scores is equal.
+[11:45:52] model data value and then scores of one. So we got 100%.
+[11:46:02] So, this is the way we can use it.
+[11:46:15] Now here, the hyperparameter tuning and all those things, they cannot change the layer values. They cannot change the number of neurons.
+[11:46:31] They cannot add any layer, right? They are just because architecture is somewhere else. Only thing is they can use that architecture, right? So that is where we call it as a model subclass.
+[11:46:48] When you build the complicated models, then people, different people, they want to use it, then we can go with the model subclassing. Hope it is clear now, model subclassing. Okay, go ahead with the question, Tarun.
+[11:47:04] at the architecture it's a model that does a three class classification given number of inputs because our output is fixed. Can we extract the outputs or you know only the inputs is something which is separated out from the
+[11:47:18] architecture. So this architecture basically is a model that does a three class classification because output is three. So if we bring out the output
+[11:47:35] also this is a general classifier yeah you can do like that yeah lastly areas we can do we can okay yeah but in subclassing you don't have that option you cannot add it okay you have
+[11:47:55] just to use instance it and use it somewhere if you are writing in here that you can accept the input from the user saying that a number of input you have to mention right so in the class here right so that you can make the changes okay so
+[11:48:15] So then it will ask you what is the number of outputs. According to that we can define here. But once the 9628 or maybe in the call is defined it is done deal. Done. Saurav.
+[11:48:37] If we go to the last, we have evaluated the model. We can see the accuracy and there's a loss also. What is this loss? Saro, actually when we are using neural networks, there will be a slight loss will be there. So difference between the work, you know, the weights. So that's what it is going to show under the neural network.
+[11:49:02] So generally what we think is when this loss is 0.0236, 100 minus 0.0236 we call. So we say something like 0.99, we have to get it. But in the neural network model, this loss will not be considered here. So this is a different loss when the weights are calculated. So that's what it is showing. It's not related to accuracy.
+[11:49:26] here generally. Any other questions? Go ahead, admit yourself and put the question. Doctor, can we inherit the architecture? Come again? Can we inherit the architecture? Can you do inheritance here? Yeah, I did that only, model inheritance only, right?
+[11:49:42] Suppose if you want for some other purpose this model and I want to expand more layers according to my need. Can we put this on top of this? Can we reconstruct another sample? Yeah, you can. Thank you.
+[11:49:59] Professor, here we have used functional syntax, so can I use sequential syntax also? Yeah, you can use sequential anything. Okay, okay. Yeah, thanks. Yeah. How you are building it is your wish, right? So, shut it down.
+[11:50:11] Any other questions?
+[11:50:23] said that we can productionize this and we can also put it into Edge devices, etc.
+[11:50:34] Again, we need to save the model. I will show that.
+[11:50:44] Okay, so here one question is...
+[11:50:56] Right, so variable output. Okay, let me do that. Okay, what I will do Keras model.
+[11:51:06] super my model then here output units I can
+[11:51:16] What else we can take? Offput. Activation.
+[11:51:29] this will change right generally output units and output attrition then coming to this
+[11:51:42] I can say cell.info is called dense. Here, I can take output units and in the activation,
+[11:51:52] I can take instead of this. What happened? Just got activated.
+[11:52:02] Okay, and then send.
+[11:52:12] this so what I will do and go to downloads
+[11:52:23] architecture and I will delete this.
+[11:52:34] Now file, download notebook, going here.
+[11:52:43] I will delete this. Okay. Now.
+[11:52:54] I will upload the latest one. If you see the architecture,
+[11:53:07] We have now output units and output activation. Now, this can be used for general purpose. How do you use general purpose now?
+[11:53:21] This one good to go, this one good to go, this one good to go. Here when you say model as a sample.
+[11:53:36] Input is three shifts, right? So now here in the modal sample, what we need? Pass the outputs and... Three and... So we can say...
+[11:53:52] Okay, so we can take, for example, Cree and? Softmax. Softmax. Takes one position argument, but sample is already there.
+[11:54:05] You need to upload that again, right? No, I uploaded already. Maybe it is taking the
+[11:54:19] No sir, even not run that cell, first cell. That's the reason. No, I have executed. Executed, but it's happened.
+[11:54:31] I think you have to upload that.
+[11:54:44] architecture.py again, right? Actually, I have the architecture, but it is taking maybe from the memory RAM, okay.
+[11:54:59] Okay.
+[11:55:08] now.
+[11:55:23] I'll do one thing.
+[11:55:36] I'll take this one. Okay, so now we got the score one, perfect. So now here variable length.
+[11:55:52] So your problem is resolved, good to go. Okay, what I will do now? I'll do one thing. I will take diabetes data, okay?
+[11:56:10] we take diabetes data? Tell me in diabetes data, what do we have in diabetes data? How many outputs we have? Binary. It's a binary classification, correct? Yeah. Okay. So binary classification.
+[11:56:28] means I need to write here three instead of three how many I need one instead of softmax I need to put sigma correct yeah okay so now and also you have to remove that state
+[11:56:44] also right no which one it is a binary I think there is no need categorical yeah that's all come one by one okay that's we need to change okay first of all how to use the model right okay so already imported now import
+[11:56:57] pandas as pd and then df is equal to pd dot read underscore csv df df dot head we can see
+[11:57:12] Outcome is one and zero, correct? Now, what does x tell me? x will be, can I say df.dropOutcome and the value?
+[11:57:27] values and this one. Good. Now what we do x underscore train and x underscore test then y underscore train y underscore
+[11:57:41] test is equal train underscore test underscore split x and y then test size will be 0.2 something then we are using random underscore state is equal
+[11:57:55] So now I didn't use y is equal to two categories. Why? Because it is only a binary.
+[11:58:10] So when we need to apply the two underscore categorical, if it is a multi-class, binary class, no need. Now scalar is equal, standard scalar, and do that.
+[11:58:34] It's just the same thing. For every deep learning model, scaling is definitely needed. Now, input is equal. Inputs of how many inputs you have to tell me now? Pregnancy is 1, 2, 3, 4, 5, 6, 7, 8.
+[11:58:58] So we write inputs as a, input is 8. Agree? Yes or no? Yes, yes. Okay. Then let me make it as a my model or D model. Means it's a diabetic model, right? So D model is equal. Sample of, what is the expected output 1? What is the function activation for the 1? Sigma 8, correct?
+[11:59:20] Yes or no? Yes. Okay demodel.call what we can say inputs. Now demodel.compile. Optimizer is Adam. What is the last now? Binary cross entropy. Why? Because we have a binary classification. Here we took
+[11:59:39] Why? Because it is more than two. That is the reason we took it as a categorical cross entropy. Correct? Yes. Okay. So now compile the model. After compiling, what should we do? Fit, extrane, batch size is 100. Same thing.
+[11:59:50] Meanwhile, the score is equal.
+[12:00:01] Day model evaluate this one. We got how much?
+[12:00:14] 72% accuracy we wanted. Correct? Okay, clear now.
+[12:00:30] How can we use architecture? Yes. So architecture we are separating from the custom logic. Now the logic is this custom logic is separated, right? So when you want to separate the custom logic into
+[12:00:44] deep learning models, then we go with which kind of models we use. Model subclassing. So now you've got an idea.
+[12:00:58] Please share the notebook. Which notebook? You mean to say this one?
+[12:01:08] Okay. Copy. Okay.
+[12:01:18] First one we started with what is Keras. Keras is a
+[12:01:30] framework. You understood, right? Next one, we talked about how many we
+[12:01:42] we can build the Keras using. First one we talk about is the sequential API. Second one,
+[12:01:54] functional API, third one, model. So we have seen an example implementation in SQL.
+[12:02:12] We have seen an example implementation in functional, and we have seen an example implementation in functions of classing. I'll wait for two minutes here. Any questions? You're most welcome.
+[12:02:28] I hope I make you understand all these three ways. We have seen the description and technical implementation too, right?
+[12:02:42] So as we have the time, what I will do is... Any questions regarding this? Any basic questions?
+[12:02:59] question also if you have in your mind, you can just put it. Happy to answer. Yes, good. Avik. Yeah. I think it's just one query. So some of the values we are at this time,
+[12:03:16] taking randomly like the depth and width and how many neurons and how many layers we need to take. So in future should we have any other framework or process to define what is the probabilistically the best number we should choose?
+[12:03:36] No, no, no, not problems today. I will show you now. Okay. We have a time, right? I will show you that. Okay. As you said, okay. I'll take up. No problem. Next question. You asked us to remember something, right?
+[12:03:54] Something is that Keras tuner, okay? Anyway, Avi cast me, so I'll show that. So MLS versus DNN, can you talk more about optimizers like Adam? Okay.
+[12:04:07] So can anybody tell me what is an optimizer?
+[12:04:17] To minimize the loss function, we can readjust the weights.
+[12:04:28] Speed up the process. Okay, so very simple.
+[12:04:41] For example, what is an optimizer actually? Optimizer is nothing but which is going to optimize the neural network weights. What do you mean by optimizing?
+[12:04:57] When it is going feed forward or back propagation, it need to look for the weights which are the best one and which will lead to loss equal to zero. Now coming to the Adam optimizer.
+[12:05:10] because most of the time I use the Adam optimizer, right? So Adam optimizer, it stands for
+[12:05:24] algorithm, which is going to update the neural network rates like when the training is happening. So end of the day, loss is minimized as we can say that need to go to loss as a zero.
+[12:05:38] So, we can say that in simple words, we can say that this optimizer will help the model to learn faster and more efficiently by adopting the learning rate for each
+[12:05:55] So that's what. So why do we need for basic actually. Basic what is the gradient descent problem. Same rate for all the weights right and generally we call it as a slow convergence we call it.
+[12:06:16] Sometimes it can get stuck or it will oscillate in the loops. That's the reason we go with the Adam. So the core idea here is the one thing, two things on there. Adam combines two parts. One is a momentum we call it and RMS prop we call it. So practically how Adam works generally
+[12:06:39] First, it will, the momentum we call it, right? So two parts I told you, right? One is the momentum. Somebody posted in the chat, what is that? Can you explain what is a dropout and how it choose the neurons which to drop? For sure. Okay. Okay. So now we have a momentum. So momentum, what it is going to do? First of all, it is going to track the
+[12:06:59] average gradient, and it will smoothly update the weight. And then coming to the second part is the momentum after that adaptive learning. So keep track of this average squared gradient, then it will adjust the learning rate per parameter. So for each weight, Adam, what it will do is technically, theoretically,
+[12:07:17] And then it is going to correct the bias and again update the white. So that means in each way it gets its own adaptive learning rate. So instead of the fixed one compared to the gradient descent. So that is the reason we are going to say it is an optimizer.
+[12:07:39] So optimizer in the sense in the layman example you think like somebody who is adjusting the weights to make the loss is zero is an optimizer. So why we are taking Adam here is the Adam latest one which combination of the momentum and rms proc those are adaptive learning rate which will be combined with the you know updating the past gradient so those combination they came out
+[12:07:57] with Adam. Hope it is clear now. What other optimizers do we have along with Adam? I have given a list of optimizers here. So if you go to Keras optimizer, available optimizers are SGD,
+[12:08:08] So what do you mean by combination of algorithms?
+[12:08:24] in the sense, for example, gradient descent is what it's doing. It is the decaying the gradient descent, right? So then the combination of momentum in the sense, it is going to add updating according to that.
+[12:08:43] So every neuron is going to have a different learning rate. That's what Adam, we call it. So one is the unique kind. Second one is the, we can say that fluctuation, something like that. So those combinations, they came up as Adam.
+[12:09:01] End of the way, end of the, you know, the end is we need to optimize the weight. How do we optimize the weight by single algorithm or two algorithms or three combinations? They came up with different variety of optimizers, combinations. Okay. Okay. Yeah.
+[12:09:14] Okay. Any other questions here? Sir, can you talk about the dropout, sir? Dropout? Yes, sir.
+[12:09:27] basic I mean to say. Do you got an idea what is the drop? Yeah sir but again no I don't know which neurons it drops actually.
+[12:09:39] what is the criteria based on what it is dropping that thing. Okay, so let me put it in a simple way.
+[12:09:57] decision tree is prone to overfitting, correct? So to come out the problem of overfitting, what we are doing, we are coming up with a new technique called as an ensemble technique, which is a, for example, random forest classifier we are taking, correct?
+[12:10:13] So, or we can say stacking layer, we call it, or voting classifier, we call it, different algorithms to use it, right? So, it is, again, dropout is like we
+[12:10:33] control the or we can say prevent the overfitting in the neural networks like in the classical machine learning we are using ensemble technique to stop the overfitting similar kind we are trying to stop that prevent overfitting using the dropout layer so during training dropout random
+[12:10:54] turns off right so some neurons in the layer so drop what what happens for example some learning neurons are there right so it will freeze them okay so then it is going to take the remaining so once it is get optimal weights they freeze them and the remaining which we are not getting so think like when you are you know what you call that square puzzle we
+[12:11:12] When you're solving, one side is solved. We keep that one side idle. Remaining three sides, we go on flipping, correct? I don't recall the name. What is that? Oh, sorry. The Rubik's Cube, sorry. Thanks, thanks.
+[12:11:34] Rubik's Cube. In the Rubik's Cube, one side is adjusted. So what we do, the remaining three sides just go on flipping to make it everybody's normal. So when the two sides are equal, third one, something like that. So that's what the dropout is doing, similar kind. So the main idea of dropout is the overfitting only. So how
+[12:11:55] we drop the overfitting. So like you know neurons generally sometimes neural networks will in especially in convolution neural networks are in the RNNs they're prone to overfitting to come out the problem of overfitting they have introduced the dropout layers okay. So in this what happens during the training dropout in the sense some of the neurons
+[12:12:15] they put the weights randomly zero. So here in the training part, in the testing part, there will be no dropping out, but full network will be used. But in the training part only, some of the neurons will be put into zero so that it can stop the problem of overfitting. So when I say if
+[12:12:31] the dropout is equal to 0.4. Okay, let me explain this way. Let me take some, I have a layer, think like I have a layer with one, two, three, four, five neurons, okay?
+[12:12:46] Okay, so when I say drop out 0.4, that means 40% of the neurons are randomly turned off, right? So 40% means out of five, what is the 40%?
+[12:13:01] for the 20 means two neurons, right? Yes, sir. Yes, so that means randomly it can be 1, 0, 3, 0, 5. So these neurons values will be zeros.
+[12:13:16] Next step what happens, next step the different will be dropped. Like this, dropout will happen. So why dropout help generally? Reduces the overfitting.
+[12:13:34] course is the neurons to learn independently. These are two options. Okay. A lot of things are there. Okay. So when you say 0.2 is 20% drop out like that. So the common value is generally if you're using CNN up to 0.2 to 0.3 is the common value.
+[12:13:51] put it okay. Hope it is clear. Sir what you wrote 10305 right what is that I didn't get actually exactly. So okay make it something like this so I have three neurons in a layer five neurons so neuron one neuron two neuron three neuron four neuron
+[12:14:09] Now, when you say dropout 40%, 0.4 dropout you are saying, so every execution two neurons randomly will be 0. So that means N1, for example, this will be 0 and this will be 0, this one. In extra iteration, it can be 0.
+[12:14:22] be 0 and something like this. When you say 0.4 only two neurons will be 0. That's it.
+[12:14:37] Every layer or? It's every layer we can. After the layer we can introduce, wherever you want. So after sequential we are doing, right, Puranthri? For example, 10 soft, we said
+[12:14:54] the first layer and here we can introduce for example dense here we can introduce the dropout in between here we can introduce the dropout how you introduce the dropout those layers will be activated okay okay yeah thanks welcome rakesh what is the question sir i have one small
+[12:15:09] I have seen in two places, torch.nn and torch.nn.functional. So which one needs to be used? It is Keras, it is not Torch Rakesh.
+[12:15:19] See, they're actually both are same only Rakesh, okay.
+[12:15:33] the they kept into different libraries but end of the day both will do the same job oh anyone can use it and we can use it for example i can use tf.keras i can use keras either we know
+[12:15:45] a problem. One question. We were talking about dropout. Dropout can be used even after raising
+[12:15:58] CNN layer also or it should be used only after linear layers? Good question. What is the difference between CNN and linear layers?
+[12:16:10] CNN is correct. Don't take me wrong. Just I want to know what is the difference.
+[12:16:21] That is flattened layer, so one dimensional layer whereas CNN can be two dimensional or three dimensional.
+[12:16:35] So every architecture if you see, generally, it can be linear end of the day. One if you are taking all of them in linear only. Like end of the day we are saying flatten only. Correct, Vasantha?
+[12:16:47] For example, if you are using in dense layers. So in dense layers, how we use, for example,
+[12:16:59] Let me take an example. People are taking me to our CNN again. Okay. So dense, for example, 20.
+[12:17:09] activation is equal to value then I will write here drop out 0.5 then dense
+[12:17:22] 32 activation blah blah okay so here dense layer may have a many parameters and there is a high risk of overfitting so that's the reason we are putting
+[12:17:37] the dropout. It is a linear dense layer, correct? Now coming to the CNN, here in the CNN, what do we have? Con2D and then we have 32, for example, 3x3 filter.
+[12:17:55] and then the activation is relu. Here I can use max pooling. Then max pooling follows, right? Yes. Then 2D, because if I'm using 2D, it must be 2D. For example, 2 by 2. And then here we use the draft
+[12:18:13] For example 0.25 something. So here the linear we can use it and here in the convolution also we can use it. So both the way here it is going to prevent the overfitting and deeper into the CNN. Means the feature maps are more robust. Okay got it.
+[12:18:29] And in this Keras, wherever we are using dens right, so the dropout is being taken by the Keras infrastructure itself. No, we can add it. That means the Keras will provide the only auto
+[12:18:40] Okay, so can you go back to your notebook? Sorry, I'm asking too many questions.
+[12:18:53] So, can you go back to your notebook? Where can we introduce the dropout here? Maybe we have to go to architecture. Okay. After each layer, we can introduce
+[12:19:05] And where should we put the Q&A Ravi? I am coming to that.
+[12:19:18] So what I did now, I think they're running out of the time. Okay, what I will do, already this one is the first one program, right? I'll make a copy.
+[12:19:34] This is a copy, which is a sequential one, correct? Yes or no, just with me, say yes. I made a copy. What I will do first, I will try to install the Keras tuner.
+[12:19:46] fast because so here we can say pip install keras tuner
+[12:19:58] Okay, it is giving runtime. Okay, this is closed anyway. This is also okay. Runtime.
+[12:20:09] disconnect so now I have a pencil now connect
+[12:20:19] Hmm. Okay, so I installed the.
+[12:20:28] Two and a half.
+[12:20:43] This is importing on the libraries.
+[12:21:03] Why it is taking this much time?
+[12:21:13] Quoting is taking this much time. Shall I close the remaining notebooks?
+[12:21:26] Okay, closed it, okay. Now, loading. Everybody with me, right? The same thing what I did in the previous, I'm doing categorical.
+[12:21:38] and X-Train, Y-Train, and the scalar part. Now, what I will do here,
+[12:21:52] I'll create a simple function, build underscore model HP hyperparameters. Okay. It's giving HP. That's good.
+[12:22:02] So I'll take this.
+[12:22:14] Okay, now here the activation, I did it. Then model.compile, last is categorical class.
+[12:22:28] I will remove this code. Done. So what I'm doing now, I'm combining the architecture sequential. And then after that, I'm adding the compile part also.
+[12:22:42] Then when I execute this function, what I will get? I will get the model build and the compile also. Correct? Yes.
+[12:22:59] So do one thing, just give me a thumb so I can understand. Can you explain? Should we use dropout after each layer? Yes, Radhika, you can. There is a question, QA, what is that? Basic question, Professor.
+[12:23:14] We create a real neurons instead of instantiating as perceptron using like practice of neuroplasticity, real neurons. What do you mean by real neurons? I didn't get you.
+[12:23:30] In the brain. Yeah, exactly. Yeah, it is possible. That's what it is doing nowadays in what you call in genomics, right? They are doing that only. Then why are you calling it perception?
+[12:23:49] Then what you are calling? Perceptrons. The basic name is when we are using the copy of that real mimic we are using. That's the reason Perceptron we call it. Okay. I'm not using here anything real new. It is a just mimic. So it is like, you know, alias.
+[12:24:05] Okay, tuner is equaled. Let me first, KT, did I define KT here? It asked tuner if I didn't define, right? I didn't import it here.
+[12:24:17] input from Keras tuner KB. So now we are here, KB.
+[12:24:27] Okay. Okay. And if you don't.
+[12:24:38] and I will take directory, I can make it as a Keras underscore.
+[12:24:49] score, tuner results, I can make it. And maximum pox 10, okay. Factor is equal to three.
+[12:25:01] Then let us give the project name. Project name is equal to demo viewer or something.
+[12:25:12] then close it. I have defined the tuner. Once we define the tuner, we need to take it as
+[12:25:24] Xtrain, Ytrain, Apox is equal to 10, validation. Let me take it here.
+[12:25:33] Variegation split. Come on, come on.
+[12:25:45] Okay. Let us see if it is not, if it's showing error, we'll see 0.2.
+[12:25:58] Tuner, we said X train, Y train, number of epoch system, valuation split, I have given this one, okay? And here I can guess, for example,
+[12:26:10] If you want to see, the boss is equal to 2. Why it is not executing?
+[12:26:18] extremely trendy books too.
+[12:26:32] And I'll treat you.
+[12:26:47] They did very fast. How come? We used to show the results actually.
+[12:26:58] Okay. Best hyper parameters is equal, we can say in tuner.
+[12:27:06] Godget does go best.
+[12:27:16] It is executing, waiting to finish. There is an execution.
+[12:27:26] Something odd going on with the collab. It seems like it's stuck out.
+[12:27:39] Apple parameter.
+[12:27:50] There we can give a number of trials.
+[12:27:59] zero then the best underscore model
+[12:28:12] is equal to node.hypermodel. Okay, now finally it is giving hypermodel.build.
+[12:28:23] then test on this model underscore bit. We can have X in this code train.
+[12:28:35] y underscore train then a box is equal let us take less number of the box and that size is equal
+[12:28:47] to make it as a two smaller one then go with the scores is equal best model dot evaluate extract advise test okay and we can print the
+[12:28:57] accuracy, which is scores of 1. Then we can print.
+[12:29:05] best number of neurons in first layer.
+[12:29:15] Here, this one, best learning rate we can print it.
+[12:29:25] Link index out of range. Somewhere it is doing wrong.
+[12:29:34] It's good. Yes.
+[12:29:45] Spelling a batch, I think it is wrong. Can you just check? In batch, Vishwa?
+[12:29:55] Where is the badge? Line number 24. Cell number 24.
+[12:30:06] Number 24. Line number. That size. That size, okay.
+[12:30:17] Test index out of range, scores of one. Let us do one thing, scores only.
+[12:30:28] Number of trials is equal to 1. I have given good. Actually it must display some results.
+[12:30:39] some time actually. Why it is not working? Let us try this one.
+[12:30:48] Brilliant, John Mason.
+[12:31:02] Hello, everyone.
+[12:31:14] I mean, then I know it's not a big deal. It's not a big deal? No. It's not a big deal.
+[12:31:23] Okay done. So it is now executing.
+[12:31:34] Tuner will take time, so it is going to search what are the best values.
+[12:31:50] Actually, this in the production I have written long back.
+[12:31:59] we call them. Okay, good.
+[12:32:13] So one more thing is these like, you know, the LLMs, which are making our life easier. Apart from that, they're destroying our
+[12:32:28] you know what you see the creativity also so let's see instead of like you know now the time complexity we are unable to debug it anyway we took the help of Gemini right so this is very
+[12:32:44] good but later when we want to write individually we'll forget the coding, right? Definitely we need to take help of LLM only. So dependency of LLM day by day is increasing, correct?
+[12:32:58] Companies are also expecting LLM related only sir. They don't want to code from scratch. Not from the scratch but the thing is like you know
+[12:33:14] I have seen C. I didn't update my LinkedIn profile, so I work for two companies more. One is the head of the AI in US based company, second Amazon solution architect in the healthcare sector and security sector.
+[12:33:34] see the people, they write the code, but in the POS is when I asked them, like, how did you get this one? There's a confusion, they don't know. So they're using Windsor, they're using cursor, they're writing the command and whatever the errors are getting, right? So that's where.
+[12:33:51] There is one recent incident happened where the big failure due to the internal code itself. They wrote the code and it was calculating the incorrect interest rate and because of that a lot of penalty happened. So now they have
+[12:34:10] the normal coding. Yeah, no, actually it is going to give the code, but end of the day we need to validate it. So validate, we need to be getting in touch with the code, right? So people are getting away from the coding part. That's the main thing I'm saying. Okay.
+[12:34:31] So now it's executed. It said that best number of neurons in the first layer, how much? 104. In the second layer, it said how many? 72. And relinked at 0.01. Then this is going to give you the good accuracy. This is what Keras tuner is doing, right? Now this is production ready, we can say. Good.
+[12:34:51] So now we can remove the Keras tuner and directly use those many neurons or use that? Exactly, yes we can. Thank you. Yeah, welcome. So as somebody asked, I covered this also. It's actually not part of the session, right? So but now your production ready code is
+[12:35:07] got. Okay, so I will share this notebook also for the reference you can use it like when you're doing your hackathons and you know when you feel how to decide number you scare us to not then
+[12:35:23] Okay, so today it's very interesting questions and actually glad to take the session after I think so after a month or something again I took the session for you right.
+[12:35:35] You are welcome to take your lessons. Maybe Raju is listening our conversation.
+[12:35:51] and then like you know the technical sessions I'll be there definitely. So today we got like what is Keras you got the idea, what is sequential you understand now, what is you got functional
+[12:36:09] and then you understand what is model subclassing, right? Now you became guru of Keras now, I can say. Just implement this, take your different problem statements, use convolution neural network,
+[12:36:32] our RNN, our LSTM, our GANs, our transformers, whichever you want. Use it with the Keras. It will be very easy compared to the PyTouch. And as it is from the Google production, so mostly industry is ready to use most of them. They're using the Keras with the intenser.
+[12:36:50] And then finally share the notebook as well. I shared I think, right? Already. Not notebooks. Sorry. Yes. Yes. All three. All three. Sorry. This one. Okay. Okay. Anybody can take it as a
+[12:37:07] project this one and you know build a model which can understand Habib's handwriting and make it clear. That should be our end project then. So if you are doing that you will get you know you can file the patent also and
+[12:37:22] that. Okay. So any help you need, I'm there. Okay. So. Can you ask this doctor in your name is a PhD doctor or a medicine doctor based on
+[12:37:33] Okay, so what do you like if you like medicinal doctor you can think
+[12:37:48] like as a medicine doctor. But I'm not a medicine doctor. I'm a... No, no. With the script we say that a medical doctor... Ah, okay. From the script I'm a medical doctor. But...
+[12:38:04] Real time, I'm not a medical doctor, I'm a PhD doctorate in AI. Actually, recently I got another, what do you say,
+[12:38:19] in cyber security also recently I got a patent in that and I published one of the journal also Q1 journal which is like world top 25 people will be there in that AI so I published a research paper
+[12:38:35] So this teaching inspires me actually. When you are in development side, the mind will block completely. I can understand, right? Everybody black with the deadlines and going in the production errors and mentoring the team.
+[12:38:52] But these things will give me relief like at the end of the day when you are taking the session, you will listen to something new from the see the questions will come from the participants make you to think and come up with some new research. That's what right.
+[12:39:13] also write a few lines in your research paper. Yeah, definitely you can. Contributors' names. Yeah, you can. No, no. Really, you people are really interested in writing the papers. You don't go with Q1 journals directly. Some the Q2, Q3 journals are there. So you can drop an email, some topic if you
+[12:39:34] like it i can guide you like you know how to go because that will give you your you know what you say the visibility in the market it's not like even we are growing right so you have to update yourself so learning curve will not stop anytime so now generative is coming in next quantum actually right so those things to make you in the market it's not like only for the earnings it is cura
+[12:39:55] also right so you have to according to the market you have so if somebody is asking the question you can you must be capable of giving the answers when you are into this field correct. Is there any journals is available best journals in the this one on EA and etc? You know you have a lot of journals out there a lot of journals from the scope of
+[12:40:18] and IEEE and Web of Science you see a lot of journals but paid one so you have to pay for them to get the you know the transformer is for example if there is no research in 2017 the transformer is the AI now generated what we are using that is from transformers only right that is the first all about attention that's what the return the research
+[12:40:41] paper, from that we got everything working, correct? If the research is not there, we might have missed that LLM and everything. We must still struggle with transformers only, up to some extent, right? Okay, anyway, thank you for your time and the patience. I hope you enjoyed the session. Take care. Thank you. Thank you.
+[12:40:53] Thank you sir. Thanks a lot.
+[12:41:02] Do you have any other questions?
+[12:41:29] you
+[12:41:37] so
+[12:41:45] Wow!
+[12:41:53] you
+[12:42:27] Oh...
+[12:42:37] Oh.
+[12:43:01] you
+[12:43:10] Thank you.
+[12:43:21] It's been a good experience. I think it was a good experience.
+[12:43:29] Thank you.
+[12:43:39] in the way.
+[12:43:50] Thank you.
+[12:44:00] uh...
+[12:44:11] Are we done yet?
+[12:44:24] Yeah.
+[12:44:33] Okay. Okay.
+[12:44:41] you.
+[12:45:00] Okay.
+[12:45:11] Yeah.
+[12:45:20] You should be able to find the problem.
+[12:45:29] Hey, why are you talking to my daughter?
+[12:45:49] Okay, I'll try it out.
+[12:46:08] Yeah.
+[12:46:18] Okay.
+[12:46:27] Okay.
+[12:46:40] Yeah.
+[12:46:49] Thank you.
+[12:46:58] Thank you.
+[12:47:06] Yeah.
+[12:47:14] Thank you.
+[12:47:23] Thank you.
+[12:48:09] Can we all get out of here?
+[12:50:28] you
+[12:50:48] you
+[12:51:29] you
+[12:51:43] you
+[12:52:17] you
+[12:53:28] you
+[12:53:36] Okay.
+[12:55:50] You're welcome.
+
+# Session ended: 2026-02-07T12:56:05.719697
