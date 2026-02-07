@@ -1,4 +1,5 @@
-# Zuora - LeetCode Discuss
+# `zuora`: Leetcode discuss posts
+
 
 ## Fetching posts for tag: `zuora`
 
