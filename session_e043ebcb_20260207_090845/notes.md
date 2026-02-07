@@ -6,9 +6,9 @@
 ---
 
 ## 📌 Version Control
-**Last Updated:** [09:53:51] February 7, 2026  
-**Transcription Coverage:** Session start → [09:53:51]  
-**Status:** 🟢 Live session in progress - Notes being updated incrementally
+**Last Updated:** [11:14:47] February 7, 2026  
+**Transcription Coverage:** Session start → [11:14:47]  
+**Status:** 🟢 Live session in progress - Break at [11:14:47] (returning by 11:30)
 
 ---
 
@@ -23,7 +23,13 @@
 8. [Sequential API - Deep Dive](#sequential-api---deep-dive)
 9. [Neural Network Parameters](#neural-network-parameters)
 10. [Practical Example - Iris Dataset](#practical-example---iris-dataset)
-11. [Additional Resources](#additional-resources)
+11. [Advanced Features (2025)](#advanced-features-2025)
+12. [Functional API Introduction](#functional-api-introduction)
+13. [Functional API Characteristics](#functional-api-characteristics)
+14. [Hyperparameter Tuning with Keras Tuner](#hyperparameter-tuning-with-keras-tuner)
+15. [Q&A: Early Stopping & Accuracy Management](#qa-early-stopping--accuracy-management)
+16. [Production-Level Implementation](#production-level-implementation)
+17. [Session Summary](#session-summary)
 
 ---
 
@@ -2263,3 +2269,631 @@ graph TB
 **Session End Time**: [Transcription in progress...]
 
 *Note: These notes are enhanced with additional explanations for better understanding. Refer to official Keras documentation at keras.io for more details.*
+
+---
+
+## 12. Functional API Introduction
+
+### What is Functional API?
+
+The **Functional API** is more flexible than Sequential API. It allows layers to connect in any way, not just in a linear sequence.
+
+**Key Insight**: If you see parentheses `( )` in programming, you're dealing with a function!
+
+```
+Sequential API (linear):
+Input → Layer1 → Layer2 → Layer3 → Output
+
+Functional API (flexible):
+      ↙ Layer2 ↖
+Input → Layer1 → Layer3 → Output
+      ↖ Layer2_alt ↙
+```
+
+### When to Use Functional API?
+
+```mermaid
+graph TD
+    A{Choose API} --> B["Sequential API"]
+    A --> C["Functional API"]
+    
+    B --> B1["Single input<br/>Single output<br/>Linear flow"]
+    B --> B2["Simple classifiers<br/>Fast prototyping<br/>90% of use cases"]
+    
+    C --> C1["Multiple inputs<br/>Multiple outputs<br/>Complex architecture<br/>Skip connections"]
+    C --> C2["Production models<br/>Advanced architectures<br/>IoT/Real-world problems"]
+    
+    style B fill:#90EE90
+    style C fill:#FFD700
+```
+
+### Real-World Example: IoT Device Monitoring
+
+```mermaid
+graph LR
+    subgraph Input["Input<br/>Device Sensors"]
+        I1["Temperature"]
+        I2["Pressure"]
+        I3["Voltage"]
+        I4["Current"]
+    end
+    
+    subgraph Hidden["Shared Layers"]
+        H1["Dense(8)<br/>ReLU"]
+        H2["Dense(10)<br/>ReLU"]
+        H3["Dense(10)<br/>ReLU"]
+    end
+    
+    subgraph Output1["Output 1<br/>Classification"]
+        O1["Malfunctioning?<br/>Yes/No<br/>Sigmoid"]
+    end
+    
+    subgraph Output2["Output 2<br/>Regression"]
+        O2["Remaining Life<br/>in Hours<br/>Linear"]
+    end
+    
+    I1 --> H1
+    I2 --> H1
+    I3 --> H1
+    I4 --> H1
+    
+    H1 --> H2
+    H2 --> H3
+    
+    H3 --> O1
+    H3 --> O2
+    
+    style Input fill:#90EE90
+    style Output1 fill:#FFD700
+    style Output2 fill:#FF6B6B
+```
+
+**Use Case Explanation:**
+- **Single Input**: 4 sensors provide input
+- **Shared Hidden Layers**: Process features together
+- **Multiple Outputs**:
+  - Output 1: Classification - Is device malfunctioning? (Yes/No)
+  - Output 2: Regression - How many hours remaining? (number)
+
+---
+
+## 13. Functional API Characteristics
+
+### Multi-Input/Output Capabilities
+
+**Single Input, Multiple Outputs** (Functional):
+```
+Iris features
+    ↓
+    ├→ Classification (Species)
+    └→ Regression (Flower Size)
+```
+
+**Multiple Inputs, Single Output**:
+```
+Image + Text
+    ↓
+    └→ Combined Prediction
+```
+
+**Multiple Inputs, Multiple Outputs**:
+```
+Image + Metadata
+    ├→ Classification (Object)
+    ├→ Location (Bounding Box)
+    └→ Confidence Score
+```
+
+### Understanding Functional API Definition
+
+```python
+# Step 1: Define input
+inputs = Input(shape=(4,))
+
+# Step 2: Pass through layers
+x = Dense(8, activation='relu')(inputs)  # Layer 1
+x = Dense(10, activation='relu')(x)      # Layer 2
+x = Dense(10, activation='relu')(x)      # Layer 3
+outputs = Dense(3, activation='softmax')(x)  # Output
+
+# Step 3: Create model (important!)
+model = Model(inputs=inputs, outputs=outputs)
+```
+
+**Key Difference from Sequential:**
+- Connectivity happens in the function calls
+- Must create Model object at the end
+- More explicit about data flow
+
+---
+
+## 13b. Functional API Code Implementation - Multi-Output Example
+
+### Real-World Scenario: Multi-Task Learning
+
+**Problem**: Predict both classification (flower species) AND regression (flower size)
+
+### Complete Code Walkthrough
+
+```python
+# Step 1: Imports
+from tensorflow.keras.layers import Input, Dense
+from tensorflow.keras.models import Model
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+
+# Step 2: Load iris data
+iris = load_iris()
+X = iris.data  # Features: (150, 4)
+y = iris.target  # Labels: (150,) - Species (0, 1, 2)
+
+# Step 3: Create synthetic regression target
+# (In practice, this would be real data like flower size measurement)
+y_regression = np.random.rand(X.shape[0])  # Random values 0-1
+
+# Step 4: Split data
+X_train, X_test, y_train_class, y_test_class, y_train_reg, y_test_reg = train_test_split(
+    X, y, y_regression, test_size=0.2, random_state=42
+)
+
+# Step 5: Standardize features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Step 6: Define Functional API model with multiple outputs
+inputs = Input(shape=(4,))  # 4 features
+
+# Shared hidden layers (same for both tasks)
+x = Dense(8, activation='relu')(inputs)
+x = Dense(10, activation='relu')(x)
+x = Dense(10, activation='relu')(x)
+
+# Output 1: Classification (species)
+output1 = Dense(3, activation='softmax', name='species')(x)
+
+# Output 2: Regression (flower size)
+output2 = Dense(1, activation='linear', name='size')(x)
+
+# Step 7: Create model with multiple outputs
+model = Model(inputs=inputs, outputs=[output1, output2])
+
+# Step 8: Compile with separate loss functions
+model.compile(
+    optimizer='adam',
+    loss={
+        'species': 'sparse_categorical_crossentropy',  # For classification
+        'size': 'mse'  # For regression
+    },
+    metrics={
+        'species': 'accuracy',
+        'size': 'mae'
+    }
+)
+
+# Step 9: Train model
+history = model.fit(
+    X_train, 
+    {
+        'species': y_train_class,      # Output 1: Classification labels
+        'size': y_train_reg             # Output 2: Regression targets
+    },
+    epochs=100,
+    batch_size=8,
+    verbose=1
+)
+
+# Step 10: Evaluate model
+scores = model.evaluate(
+    X_test,
+    {
+        'species': y_test_class,
+        'size': y_test_reg
+    }
+)
+
+# Step 11: Make predictions
+predictions = model.predict(X_test)
+pred_species = predictions[0]  # Classification output
+pred_size = predictions[1]     # Regression output
+```
+
+### Output Structure Explanation
+
+When you train a Functional API model with multiple outputs:
+
+```python
+# During training, you provide data for each output:
+{
+    'species': y_train_class,      # Classification: which species (0, 1, or 2)
+    'size': y_train_reg             # Regression: size value (0.1-1.0)
+}
+
+# Model evaluates both:
+# Output 1 (species): Classification accuracy
+# Output 2 (size): Mean Squared Error
+```
+
+### Key Insight: Shared Layers
+
+```mermaid
+graph TB
+    A["Input<br/>4 features"] --> B["Shared Layer 1<br/>Dense 8"]
+    B --> C["Shared Layer 2<br/>Dense 10"]
+    C --> D["Shared Layer 3<br/>Dense 10"]
+    
+    D --> E["Output 1<br/>Classification<br/>3 neurons<br/>Softmax"]
+    D --> F["Output 2<br/>Regression<br/>1 neuron<br/>Linear"]
+    
+    E --> G["Task 1:<br/>Species<br/>Prediction"]
+    F --> H["Task 2:<br/>Size<br/>Prediction"]
+    
+    style A fill:#90EE90
+    style E fill:#FFD700
+    style F fill:#FF6B6B
+```
+
+**Why Shared Layers?**
+- Same neurons process both tasks
+- Shared weights = reduced parameters
+- Same features extracted for both problems
+- More efficient than separate models
+- Building analogy: Same "extraction" room serves two output doors
+
+---
+
+## 14. Hyperparameter Tuning with Keras Tuner
+
+### Automatic Hyperparameter Search
+
+```mermaid
+graph TD
+    A[Keras Tuner] --> B["Automatic Search"]
+    B --> C[Number of Epochs]
+    B --> D[Number of Neurons]
+    B --> E[Number of Layers]
+    B --> F[Learning Rate]
+    B --> G[Batch Size]
+    B --> H[Activation Functions]
+    
+    C --> I["Returns Best<br/>Hyperparameters"]
+    D --> I
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+    
+    style I fill:#FFD700
+```
+
+### Installation and Setup
+
+```bash
+pip install keras-tuner
+```
+
+**Features:**
+- ✅ Automatic architecture search
+- ✅ Finds best hyperparameters
+- ✅ Saves time and improves performance
+- ✅ Handles threshold tuning for early stopping
+
+### Why Keras Tuner for Industry?
+
+**Academic Approach:**
+- Write simple code
+- Test different configurations manually
+- Trial and error (hit and run)
+- Time-consuming
+
+**Industry Approach:**
+- Need enterprise-ready code
+- Limited time for hyperparameter tuning
+- Cannot spend 20+ days experimenting
+- Use Keras Tuner for automatic optimization
+
+**Time Savings:**
+```
+Manual approach: 20 days of testing different permutations
+Keras Tuner approach: Automatic search finds best configuration
+Result: Deploy production-ready model in fraction of time
+```
+
+---
+
+## 14b. Q&A: Epochs, Model Evaluation, and Architecture Insights
+
+### Q1: Why Use 100 Epochs When Data is Small?
+
+**Question:** "Why do we need 100 epochs when the data is very small?"
+
+**Answer:** More epochs are generally better, but the exact number depends on:
+
+```mermaid
+graph TD
+    A[Optimal Epochs] --> B["Use Keras Tuner<br/>for exact number"]
+    A --> C["Manual testing:<br/>Start with 50, then 100, 200"]
+    A --> D["Monitor validation loss:<br/>Stop when it plateaus"]
+    
+    style B fill:#90EE90
+```
+
+**Best Practice:**
+- Keras Tuner automatically finds the ideal epoch count
+- Don't guess, let the tool optimize
+- Different problems need different epoch counts
+- Industry standard: Use Keras Tuner instead of manual trials
+
+### Q2: Multi-Output Layer Insights
+
+**Question:** "The last hidden layer has the same neurons for both classification and regression. How do they handle multiple tasks?"
+
+**Answer:** Through shared feature extraction
+
+```mermaid
+graph TB
+    A["Last Hidden Layer<br/>10 neurons"] --> B["Building Analogy"]
+    B --> C["Single extraction room<br/>with 10 workstations"]
+    C --> D["Two different output doors"]
+    D --> E["Door 1: Tea, Coffee<br/>Classification"]
+    D --> F["Door 2: Food<br/>Regression"]
+    
+    A --> G["Technical Reality"]
+    G --> H["Same weights used<br/>by both output layers"]
+    H --> I["Parallel tasks share<br/>extracted features"]
+    I --> J["Efficient parameter usage"]
+    
+    style J fill:#FFD700
+```
+
+**How It Works:**
+- Same neurons → same weights → same feature extraction
+- Output 1 uses these features → classification
+- Output 2 uses same features → regression  
+- Neurons work in parallel for both tasks
+- More efficient than separate models
+
+### Q3: Model Evaluation with Multiple Outputs
+
+**Question:** "How do we evaluate accuracy for both classification and regression?"
+
+**Answer:** Separate metrics for each output
+
+```python
+# During evaluation:
+scores = model.evaluate(X_test, {
+    'species': y_test_class,
+    'size': y_test_reg
+})
+
+# Results show:
+# Output 1 (Classification): Accuracy percentage (e.g., 100%)
+# Output 2 (Regression): MSE/MAE value (e.g., 0.964)
+```
+
+**Example Output:**
+```
+Output 1 accuracy: 100%
+Output 2 mean squared error: 0.964
+```
+
+**Interpretation:**
+- Perfect classification accuracy (100%)
+- Regression MSE of 0.964 (predictable due to synthetic data)
+- In production: Real data would show realistic metrics
+
+### Q4: Why Use Synthetic Data in Example?
+
+**Question:** "Why did we create synthetic regression targets?"
+
+**Answer:** Academic demonstration purpose
+
+```
+Real Scenario (not shown):
+- Actual flower size measurements
+- Real relationship between features and size
+- Would show realistic regression error
+
+Academic Scenario (what we did):
+- Show how multi-output architecture works
+- Demonstrate the mechanics clearly
+- Synthetic data illustrates the concept
+- Similar to teaching cybersecurity by showing tampered data
+```
+
+**Key Point:**
+- The architecture and code remain the same
+- Only the data source differs
+- In production, use real data for actual predictions
+
+### Q5: What is "Functional API" Terminology?
+
+**Question:** "Is Functional API the same as REST API?"
+
+**Answer:** No, different concepts
+
+```mermaid
+graph TD
+    A["API Terms"] --> B["Functional API<br/>Keras"]
+    A --> C["REST API<br/>Web/Deployment"]
+    
+    B --> B1["Keras layer syntax<br/>Callable/composable<br/>Programming concept"]
+    C --> C1["Web protocol<br/>HTTP/HTTPS<br/>Network communication"]
+    
+    B1 --> B2["Example:<br/>Dense(10)(inputs)<br/>Functional call"]
+    C1 --> C2["Example:<br/>POST /predict<br/>API endpoint"]
+    
+    style B fill:#FFD700
+    style C fill:#FF6B6B
+```
+
+**Functional API (Keras):**
+- Named because layers are "callable functions"
+- You apply one layer to another: `Dense(10)(input)`
+- Compositional/functional programming concept
+- Not related to web APIs
+
+**REST API (Deployment):**
+- Protocol for exposing models to users
+- HTTPS endpoint accessed over network
+- Use FastAPI, Flask, etc.
+- Asynchronous or synchronous communication
+
+**Industry Workflow:**
+```
+1. Build model using Functional API (Keras)
+2. Deploy model using REST API (FastAPI)
+3. Users send requests to REST API endpoint
+4. Backend calls Keras model for predictions
+5. Return predictions through API
+```
+
+---
+
+## 15. Q&A: Early Stopping & Accuracy Management
+
+### How to Restore Best Weights?
+
+**Question:** "When accuracy stops improving, how do we restore the weights from the best epoch?"
+
+**Answer:** Use **Early Stopping** callback
+
+```python
+from tensorflow.keras.callbacks import EarlyStopping
+
+early_stop = EarlyStopping(
+    monitor='val_loss',
+    patience=5,  # Stop if no improvement for 5 epochs
+    restore_best_weights=True  # Automatically restore best weights
+)
+
+model.fit(X_train, y_train, callbacks=[early_stop])
+```
+
+### Is 100% Accuracy Overfitting?
+
+**Question:** "If we get 100% accuracy, is that automatically overfitting?"
+
+**Answer:** No, not necessarily!
+
+For Iris Dataset:
+- Simple problem with clear patterns
+- Small dataset (150 samples)
+- 100% accuracy is normal and acceptable
+- Not overfitting because data is genuinely separable
+
+**Check for Overfitting:**
+```
+If: Train Accuracy = 100%, Validation Accuracy = 70%
+    → Likely overfitting (reduce model complexity)
+
+If: Train Accuracy = 100%, Validation Accuracy = 100%
+    → Good, no overfitting
+```
+
+---
+
+## 16. Production-Level Implementation
+
+### Complete Code Example
+
+```python
+# Step 1: Imports
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.utils import to_categorical
+
+# Step 2: Load and prepare data
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Step 3: One-hot encode
+y = to_categorical(y)
+
+# Step 4: Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Step 5: Standardize
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Step 6: Define architecture
+model = keras.Sequential([
+    layers.Dense(8, activation='relu', input_shape=(4,)),
+    layers.Dense(10, activation='relu'),
+    layers.Dense(10, activation='relu'),
+    layers.Dense(3, activation='softmax')
+])
+
+# Step 7: Compile
+model.compile(
+    optimizer='adam',
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# Step 8: Train
+history = model.fit(X_train, y_train, 
+                    epochs=100, 
+                    validation_split=0.2,
+                    verbose=1)
+
+# Step 9: Evaluate
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f"Test Accuracy: {accuracy:.4f}")
+```
+
+---
+
+## 17. Session Summary
+
+### Topics Covered (Morning Session [09:09:13] → [11:14:47])
+
+- ✓ Keras Framework basics and evolution (1.x → 2.x → 3.x → 2025)
+- ✓ Six key advantages of Keras
+- ✓ Backend support (TensorFlow, JAX, PyTorch, OpenVINO)
+- ✓ Three API styles: Sequential, Functional, Model Subclassing
+- ✓ Sequential API with complete implementation code
+- ✓ Functional API introduction and concepts
+- ✓ **Functional API code implementation with multiple outputs**
+- ✓ **Shared layers for multi-task learning (classification + regression)**
+- ✓ **Keras Tuner for automated hyperparameter optimization**
+- ✓ **Industrial vs academic approaches to model building**
+- ✓ **Detailed Q&A on epochs, model evaluation, and architecture**
+- ✓ Early stopping and callbacks
+- ✓ Data preprocessing and standardization
+- ✓ Production-level implementation patterns
+
+### Session Break Info
+
+**Break Time**: [11:14:47]
+**Resumption**: By 11:30 AM
+**Topics Covered So Far**: Sequential API, Functional API (both conceptual and implementation)
+
+### Still To Cover (Afternoon Session)
+
+- Model Subclassing (advanced custom models)
+- CNN for image classification (filter sizes, output calculations)
+- RNN for sequence data
+- Transformers and modern architectures
+- Transfer learning
+- Deployment best practices (REST API using FastAPI)
+
+### Key Questions Answered
+
+1. ✓ Why 100 epochs? → Use Keras Tuner for optimal values
+2. ✓ How do shared layers work? → Building analogy with shared extraction
+3. ✓ Multiple outputs evaluation? → Separate metrics for each task
+4. ✓ Synthetic vs real data? → Academic demonstration vs production
+5. ✓ Functional API vs REST API? → Programming concept vs web protocol
+
+---

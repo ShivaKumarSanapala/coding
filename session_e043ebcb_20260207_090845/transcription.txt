@@ -149,3 +149,289 @@
 [10:02:42] one two plus three how much yeah three six six total six what I'm saying is one two three four plus this two is coming to six or not that's what I'm trying to explain yeah yeah thanks these two are biased right they are not biased it and their ass is inside the with the best complete Z values Z values w1 times of x1 plus w2 times x2 plus bias correct Yeah, but like weights and bias, we learn. Combination, weights and bias, one value we are getting. Yeah, so these four weights plus two bias, right? Yes. Yeah. So our parameters are the summation of the weights and biases because they are CS Rupesh, yes. Okay, great. So now I'll jump into closer. Okay, I'll do one thing. I'll try to show you visualization, PIP, install. There is a library Keras Visualizer. So I can say from Keras Visualizer import
 [10:03:46] visualizer and visualizer the model I named it equal to test and format Fine. So this is our isolation, correct? So first we started with the input hidden layer with eight, 10 neurons and 10 neurons and then? the activation function we got is the output. This is the inputs, green color outputs, and these are the three header layers which is generated through the model. Now the stack is correct or not? 8, 10, 10. Whatever the way we are adding
 [10:05:26] Correct? Okay, perfect. Jitender, you have a question? No, no, yeah, thanks. Okay, perfect. Now we got the model. So if you look into this, how do you build it now in the building? First of all, we define the architecture. This is what we defined. Then we need to compile the model, okay? So let us go to the next step. So how do you compile the model? So we say model.compile. Here we need to mention loss is categorical cross entropy, optimizer function, and matrix is accuracy. What is the loss here? Loss, either we can go over binary cross entropy if it is a binary classification, or it is a multiclass, we have to go with the categorical cross entropy. For example, regression, we are going to take a mean square error. MSC, we can take it.
+[10:07:11] that we have different optimizer functions, like we can go with Adam or SGD, or we can go with Adam W or Lion, like different Adam functions are there. If you want, you can check in. For example, there are optimizers. So you can see now I'm using Adam, right? So in Adam class, there's a default learning rate is there. And the weight decay, we have a lot of things, right? So you can take any one. So what are the arguments you have? According to like latest one is optimizer is Adam. I'm just considering Adam only, okay? I can take SGD, I can take any model. Let us compile the model. Yes, Ashok, go ahead. Sir, this is another basic question. Right now we are connecting every node in the current layer to the every other node in the next layer. So somewhere I read like, if we have connected like this, it requires huge memory and things like that. So that is the reason we need to optimize something like that. So my question around that, is it the mandatory that we need to connect everything to all other things in the next layer or there are some ways we can reduce that number of connections? No way it is possible Venkat, but as you said, the stack of layers is different and building the architecture somewhere using is different. and making it as a function to make it faster is different. So the sequential model limitation is when you have less number of neurons, less number of layers, we can go with that.
+[10:08:44] So as you said is a memory intensive, then we go with the functional. That is the reason when I started my lecture I said there are three ways to define the architecture. One is sequential API, second is a functional, third is the model subclassing. So once we'll see what is the sequential API and we'll see what is the pros and cons and what is the real time use cases, then we'll move on to the functional. At that time we'll see why it is memory intensive and that's the reason if it is memory intensive we'll go with some other. If everything is good, we might have not gone with functional and model subclassing, right? So defining the architecture is sometimes depending upon the problem statement, some cases are memory intensive, but writing a prototype, it doesn't have any problem, right? So for a prototype, I can go with the sequential API. Production level, I will go with the functional API or model subclassing, okay? Yes, sir, thank you. Okay, so now model compile is done. Then what should we do now? Model.fit. So in the fit, we are going to write generally in classical machine learning. How do we fit? The same thing we do it. Y underscore train. And then we can write a box. This is equal, for example, 100 epochs I can take. And batch size is equal, let us take as a five. Here we have it verbose is equal to zero, for example. So when I write zero, see what happens. That size. X train and Y train. So it's a
+[10:09:52] output must have the same there is a problem which output it to it a change something you got categorical then X and Y, okay. So the parameter which we can for matrix is equal to accuracy. So what in all different values can we, we can see like for that particular- If you have a classical machine learning, we go with accuracy. If it is a regression problem, we'll go with a mean square error, right? MSC. That's all. So model.compile Okay, so when it's a model.fait, you don't see what is happening, right? Just execution is going on, correct? So finally it executed, you don't know. So that is where we write verbose is equal to zero. If you write verbose is equal to one, you can see the execution. Okay, how it is executing.
+[10:11:03] Now, here if you see, 24 you got it, right? So how do you got 24 here? At a time it is batch as a 24. Because I said batch size is equal to five, means it's going to divide, actually we have totally how many, in Iris data sample, how many we have, tell me? 150, correct? 150 sample, yes or no? Yes, sir. Okay, out of 150, we kept 20% for the testing. Remaining is how much? 120. Yes? Yes. Okay. 120 divided by five, how much will you get? 24, correct? Yes. Yes. So it divided into 24, 24, 24 into five batches. Okay. That's the reason it's a time. And how many epochs I said, a hundred times. So it will take one, it will execute a hundred times, second batch a hundred times, third batch a hundred times. Like that, it is taking the batches and executing a hundred times. We got it. So what is the difference here where both is equal to zero means no need to see it is something like when you're installing also we write hyphen
+[10:11:53] Q, right? Q means silent install. You don't see the execution, how you can see in the Collab Notebook. Where it was is equal to the same thing. It is just integer value. We can say 0, 1, 2, anything, correct? So this is about the fitting model. Once it is done, what should we do now? We need to check for the scores. Scores is equal to model.evaluateTextTest. And we can print accuracy. So we got how much accuracy? 100% we got the accuracy, okay? So this is no need for this parameter. So we got 100% model accurate because the data is very less. For example, here, as I said, if you look into this, every layer, for example, let us say, is that, Yeah, go ahead, Trump.
+[10:12:28] But how come showing us accuracy is 100%? After execution, final weights became that. This verbose doesn't have anything dealing with the... No, I'm not talking about verbose equal to one. When we call verbose, then it is printed with accuracy. Accuracy in between 0.8 to 0.9. See, it is started, right? So 0.994, yeah. That is that batch, right? So that means that the range is there between 0.98 to 0.99. Test accuracy is one. No, just let him test accuracy.
+[10:13:07] Rama, tell me, what is the question? Then how come it, obviously it has to come here as a 98 or 99, but showing is that the 100% accuracy, how it is possible just, that's what I'm asking. Yeah, Rama, actually at every batch it got some parameters, right? So when it is putting that parameter values, that is the W1, W2 values, it is approximately into one it is going in, okay? So this is like nearby values what you are getting. So for example, 995 you are getting. So these weights, when it is getting into the test accuracy, it was able to achieve 100%.
+[10:13:33] Yeah. So we got the accuracy. For example, if you look into this, every layer we set some input to the hidden layer, we have the weights, right? If you want, you can print the weights also. How do you print the weight? For example, model dot, let us take the layers of, for example, first layer is zero, dot get weights. but it is actually a bit late.
+[10:13:54] So these are the weights we got it. Okay. And these are the weights for the neurons. So these are the lines we have, right? So every line, we have these weights. And finally the neurons have, this is a value of the neurons with the bias added. Okay. So this way it will move ahead and build the values.
+[10:14:13] Clear? So the sequential is now clear? How do you build the sequential model? Any questions here? Can you just explain the weights one with relation to the in? This one, right? So it is something like, for example, I said layer one, correct?
+[10:14:30] So layer 1 means we have 4 neurons and then here we have 8. Correct? This is connected to how many? 8 connections total 32. No, no first one only you take. 8 right?
+[10:14:48] optimised weights, how many we got, see this one right, layer 0 I said right, layer 0, so how many we got, 1, 2, 3, 4, 5, 6, 7, 8, right, so this is, this is 8, first one, then the
+[10:15:07] second neuron third neuron after that we have this one also we have weights right this one z values biases those things also and i get that is 0.449 sure thank you yeah radhika yeah i mean when you are doing this accuracy right at some point it will not improve any
+[10:15:27] So, how do we restore the weights at that particular epoch and then use those weights for the validation or testing? Radhika, that is we call it as an early stopping. So, whenever you see that the weights are here, the variations are much, then we can use the
+[10:15:46] Early stopping, okay? So Keras provides the option of early stopping. Then you can freeze the weights and you can use it. Can we directly do it in the same function which you have provided or do we have to use a different function? Different functions you have to implement, okay? Okay. Thank you.
+[10:16:05] So any other questions? The 100% accuracy, are we to implicitly assume it's over-fitting or? No, it's not over-fitting, Rakesh, because the data is that, right?
+[10:16:20] data okay so in other cases maybe you cannot expect but in the iris data it is okay it's not a problem okay okay so sequential is good to go now okay now
+[10:16:33] Now the second one we'll get is the functional law. How do you build a functional API? Okay, very simple.
+[10:16:49] We include in open close parenthesis, right? Something in the parameters. Yes or no? That may be Python or that may be Java or that may be anything, any programming.
+[10:17:07] we use this way, correct? Agree or not? When you see open plus parenthesis, we can say that it is a function, right? So what is functional APIs, second one? It is, we call it as a flexible
+[10:17:19] So we can say any layer connects to any other layer. This is a flexibility. Second, we
+[10:17:29] multi input and multi output with a shade
+[10:17:42] layers. I think till now you didn't see the multi output, right? Generally we use classification is only single classification.
+[10:17:53] and it supports complex architecture. It is best for production models and advanced
+[10:18:09] it is best. So when I discuss about the sequential, I said prototyping only, correct? That is simple classifier. If you want to do the prototyping, then you can do it, OK?
+[10:18:27] As Ashok asked me like memory intensive right so when you get the stack of layers definitely it is a memory intensive but generally in any programming when we do the stack like a number of what you call step by step approach generally it will consume a lot of memory that is the reason we go
+[10:18:46] with the functional API, correct? So similar kind in Keras also, we are going to use a functional API so we can reduce the memory constraint. Another thing is sometimes we need to have two outputs and a single input, we need to have two outputs. At that time, we can go with the
+[10:19:06] What do you say the functional API? We can use it. Okay, so in that functional API API, how do you build a functional API? We'll see an example and I'll take the same Iris data sample and then I'll build it. So how it comes for example.
+[10:19:24] I have 1, 2, 3, 4, same, 8 neurons, 10 neurons, 10 neurons. Now here, output, one, I will take it as a classification. One, I will take it as a regression. Like this, I will take it.
+[10:19:42] So that means I want to define this as a classification problem is one and the regression problem I want to. So output is two. So sometimes what happens in the IoT industry, you need to classify whether the particular device is malfunctioning.
+[10:20:03] or not, yes or no, for example. Then what is the lifetime of that, for example, 20 hours or 30 hours, we want to mention that also. In that situation, we are going to have two outputs. One is whether we need to understand what is the life, for example, high, low, medium, something.
+[10:20:21] Apart from that, how much time it is remained or something. So at the time we need to have two outputs, then we'll go with the functional API. So how do we build the functional API? Let me take the same classical example. I'll stop this one.
+[10:20:41] Yeah.
+[10:21:03] Okay. For the model train, wondering if there is a way to say.
+[10:21:18] run for as long as desired accuracy is reached or it doesn't worsen or if the accuracy doesn't improve by x is 0.5 and let it run for as many epochs.
+[10:21:37] It is possible, but for that you have to keep the threshold. And as I said, right, list hopping and you can keep the threshold is not achieved. We can change that. So for that we are having one of the, what do you say, the library called as a Keras library.
+[10:21:59] tuner we call it okay so using that it is possible it is similar to hyper parameter tuning what you are saying okay to achieve the good accuracy so for that we have keras tuner you can install keras tuner and give it to that so keras tuner will take care of that and it is going to you know tell like what is the best hyper parameters even start
+[10:22:20] from number of epochs and number of you know a split will be there all those things will be that will be given like even in the number of neurons also in the first layer how many you want you can get it okay nice thank you yeah so if you want I will do one thing okay let us take
+[10:22:38] Okay, so I want just to do one thing. Once I finish this functional and the last one is the model subclassing, right? So anybody just remind me how you we need to see like, you know, we have a question like, how many number of neurons is
+[10:22:59] Just remind me, I will write down the code a little bit so you can see that how it is going to decide the number of neurons and number of layers, okay? So once this is done, three, just remind me before closing the session, so I'll take up that also. I'll write down the code for you. Good.
+[10:23:19] Okay, Taran? Yes, yes, yeah. I'm sorry. Okay, no problem. Done. Yeah, perfect. So in C, real time, how we implement, right? So whenever you're taking, if you're understanding, like, you know, any framework you are understanding, if you see, when you
+[10:23:37] and when you practically you do it is different. But when you implement in real time production level, then you have to make it production level. How do you make that? We'll see. So first of all, let me take all the imports required similar.
+[10:23:50] Here, OK. So in layers, also input already is there, OK.
+[10:24:04] OK, then we have Iris loading. Now tell me, do I need to use two categories, yes or no?
+[10:24:16] Shall I use two categorical? Yes. Yes. Yes. Why? Because it's a?
+[10:24:27] Correct? So still we are using the same thing. So use that. I'll take this part.
+[10:24:40] Now, after that, we need to split the data. Splitting data can be done similar X underscore train.
+[10:24:53] X underscore test, Y underscore train, Y underscore test is equal train test next, test size. Similarly, we can take 0.2.
+[10:25:04] Random state. Test parameter of the training test.
+[10:25:16] 0.2. Okay. Okay. Now we need to have a scalar standard scalar.
+[10:25:27] Xtest is equal to scalar dot transform. Now is the important part.
+[10:25:40] If you see here, after this what we did, we defined the stack of layers, correct?
+[10:25:53] Okay, so when we define the stack of layers, here how do we define? First we start with what is the input?
+[10:26:08] you have to define input. Okay, input tell me how many parameters we have? Four parameters. So I have given the shape as a
+[10:26:25] Then I'll define first layer. Layer L1 is equal. I said dense. How many neurons we have? 8 neurons. And what is activation? Is ReLU. This is layer 1, right? Now what is the layer 2?
+[10:26:38] Layer 2 is dense, 10. Activation is relu. Layer 3, same thing, dense, 10 neurons.
+[10:26:51] activation is relu final layer four or we can say it is an output statistic
+[10:27:03] outputs is equal dense pre activation like this correct yes or no yes okay
+[10:27:19] So we define but do you think is there any relationship between the layers? No connectivity, correct? Here if you see the stack of layers, we said we take the model, model.add, then on that
+[10:27:37] add on that add on that add so stack of layers they are adding correct but here there is no add so individually we define the layers but how do you make the connection so first layer l1 for example the layer l1 must connect with the input correct
+[10:27:57] So how do you make that? I can make it as a parameter said L1. Okay. Now that L1 is nothing but here, what do you have? First one, inputs. So make it as a inputs. Now layer one is connected to inputs, right? Now this must connected to again layer.
+[10:28:15] one layer three must connected to layer two now this must connected to layer three now the connection is established correct sir this is another type of layer connection apart from dense dot add yeah functional we are doing selection of
+[10:28:33] function in the sense, independent layers, we can add and delete easily, whereas stack of layers, we cannot add in middle, okay? Okay. This is. This is, we don't need to follow the order, correct? Only we need to do the input.
+[10:28:50] That's it. According to the input, it is combining, right? Yeah. Okay. So now... One more doubt here. So here we are defining L2 and L3 are the same structure, right? Dense of 10 and L3.
+[10:29:07] activation functions. So can't we define one layer and use multiple times as it is a functional call with the different inputs? You can. OK. You can, yeah. But for that instance, we'll be coming here. Perfect. We can do that, yeah. OK.
+[10:29:31] to use multi-output, right? Yeah, multi-output, I'll show you that. First, I have written CNOS. Just two minutes, I'll show you, okay? This is without multi-input, just simple input. Same thing I'm trying to mimic. Correct? Now it's okay. So sequential to functional, what I did is okay, correct? You understood now? Same thing,
+[10:29:49] Is there any difference between this one and that one apart from the way we have written the code? Code will make a difference, right? Code is the one which is making the differentiation, right? Defining the layers as a function layers. Okay. There also we were stacking
+[10:30:09] the layers. Here also we are stacking the layers. What is the difference? Vasantha, they're stacking the layers is like one plate you are keeping and top of that another plate you are keeping, right? Correct. Here we are trying to establish a pointers so that there is a lot of difference in
+[10:30:28] pointer connections and establishing one by one. So pointers can be moved from one place to another place, attachment will be there. Whereas if you want to insert in between another plate, it is not possible. Correct? So how can we move these pointers now? Just change the L1, L2.
+[10:30:50] So you can change L1 to L2 here just in the function parameter you are passing, correct? That you can change. You define somewhere else, add it here, no problem, right? Okay, got it. That means, I mean, here as of now, the output is same, right? But previous and this one, as of now.
+[10:31:11] Yeah, as of now, output is same. Now, just I want to show you that from stacking to functional how we are doing. But I said one of the advantage of using is the multi outputs, right? Two outputs. I will show that, okay? So this is clear now? Architecture level is clear? Yes. There is no change in number of
+[10:31:27] trainable parameters right in both the cases yeah if you are using the same number of like you know eight and ten both will be same okay so if you want to see when you say uh here model is equal to model the import
+[10:31:39] Here it import the model, sequential. Then I need to import the model also, right?
+[10:31:52] Now, model will be inputs is equal to input, output is equal to output. Then, model dot
+[10:32:04] You can see same number of parameters. Architecture is same, right? Only the way I'm defining connection is different. Good.
+[10:32:19] Okay, so now you have seen the same, but now what I will do instead of using single output, I will try to build two outputs. How do we do that? Let me again start from here.
+[10:32:30] So what I will do, I will
+[10:32:42] say y is equal to categorical y, I will take it. This is similar, correct? Now I'll try to prepare
+[10:32:52] synthetic is equal. Let me import numpy also here.
+[10:33:04] Okay, ysynthetic is equal to np.random.rand. I can take the length.
+[10:33:15] y then comma like one if you want you can see why synthetic the value so this
+[10:33:27] is the regression. So now this is the classification. This is the regression. Now how many outputs we have now?
+[10:33:38] one how many outputs we have two outputs correct yes or no yes okay now let us split the data how do you split
+[10:33:49] x underscore train okay then x underscore test then y underscore train y underscore
+[10:33:59] test, then we need y underscore synthetic train, y synthetic test, train test split,
+[10:34:12] X for this one, Y for this one and Y synthetic for this one. Then we have test size 0.2 and
+[10:34:26] Then the random state is equal to 42. Done. Splitting is a little bit changed. Any questions in this step? Good to go? OK.
+[10:34:42] So now generally we have only one output, right? But how many outputs now I created? Two outputs. One is a classification problem. Second is the regression output. Yeah Ram, go ahead Ram.
+[10:34:59] Why are you introducing this Synthetic here? Just to give you an example, how to output, that's it. Synthetic is something like Y1, Y2. Y2 is Synthetic we can assume sir. Just Y2 we can think.
+[10:35:17] Can we get some practical example where we have only one input but multiple outputs? Here you can take Vasantha but presently I don't have IoT data. No, no, no. Orally at least. Orally that's what I told you Vasantha.
+[10:35:33] like when you're going into IoT, or we can take one example, okay? One example is, okay, good question. So orally you want, right? I'll do one. Okay.
+[10:35:45] That is better. So in sequential, let us try. What is a sequential? First in the sequential, one input.
+[10:35:59] one output, right? So the model is very simple. What we do, for example, if you are taking an image, we go with the
+[10:36:15] solution layer and then we use the max pooling, then we use the dense layer, then we use the softmax. Correct? This is very simple. So, for example, I want to
+[10:36:34] I think you might have seen in when you are writing convolution neural network, CNN, plant disease. So there is a bean data in TensorFlow, it is available. So where we can say whether there is a rust or something like that, okay? So what we are doing first, we take the leaf image.
+[10:36:55] Then we are going to apply the convolution error, and then we are going to say class label. What is the class? Means what kind of disease that particular leaf is having. So one image at a time, it will take it, and then it is going to give you the answers. Now coming to the functional, as we said, for example, in the
+[10:37:15] I can take an image with CNN, then I can take an age, for example, which is a dense, then I'm going to concatenate these two, then we are going to have a dense and output. For example, I have an X-ray image of the person and then age of the person.
+[10:37:35] patient age or weight history, something. So now what I'm doing now, I'm trying to concatenate these two combinations. Then finally I'm going to get the output, right? Whether it is any kind of disease, so multiple outputs, something like that. Is that clear now? Yeah. Okay.
+[10:37:52] Yes sir. Okay good. Anyone have question here or good to go? So professor here we are getting multiple diseases means multi-class right? What about the? Multi-class. Yeah what about getting two outputs there like. Right.
+[10:38:11] What is the disease and what percentage of the disease it is harming? Here you can keep it 2. I have given one example. Outputs can also be 2. For example, pneumonia is there. X-ray image is given and age is given. What percent of the lungs are affected with that?
+[10:38:29] for example liver is there. So the first output is whether the person is having pneumonia or not, the second output is the percentage, what percentage of lungs are affected. Exactly. Okay good thank you. So one is the classification, second is the regression or we can
+[10:38:44] say this for example the lungs is it we have seen some infection so what do you say what is that infection right so one output is whether the person is having infection in the infection or not. Second we can
+[10:39:00] say whether it is a pneumonia or not. Like that also we can have two levels. Okay. Two classifications, two regression, not a problem. Okay. How do you define the model according to that? Okay. So now here
+[10:39:16] I need to do the scaling. Scaling generally, we do on features only. So we can say scalar is equal. This part did it. So no changes similar. Now, I need to define in
+[10:39:28] Inputs is equal. Input, how many features we have? Poor. So shape is equal. Poor comma.
+[10:39:47] Here you can use shape or dimension. If you use dimension directly, you can say four. If you are using shape, you have to give it as a vector. Four gamma means vector. Inputs is done. What is the first layer? Tell me. Dense.
+[10:40:00] 8 neurons activation is ReLU then connected to inputs. Second layer activation 10 connected to L2. L3 dense again 10
+[10:40:12] Activation is relu and connected to l2. Now we have output.
+[10:40:24] one is equal to what is output first output tell me dense three neurons what is the activation here
+[10:40:35] Softmax, which is connected to which layer? L3. L3, correct. What happened? Then?
+[10:40:45] outputs two which is dense regression problem okay activation
+[10:40:55] Which one? Linear. Which is connected to which layer?
+[10:41:08] We can use the sigma classification for that here. Outputs one. Output one is the regression problem, right? This output, why is which data you have numerical
+[10:41:21] values right okay okay yes or no if you have then you can go with the binary okay okay fine okay okay so it says that past activation is really okay
+[10:41:33] Spell mistake. And here give the name also. Name is equal. We can write outputs one. Here
+[10:41:42] So here the neural network definition is okay.
+[10:41:57] But coming to the back propagation, it will be defined based on how much loss we are doing. So here we are getting two losses, one is categorical loss and one is recursion loss.
+[10:42:11] So how optimizer will we do like giving any value add for one thing to do because both will be different functions right lot functions and that getting the new weights will be
+[10:42:25] How the back propagation works here? Back propagation for two different functions, two times it will do the back propagation. It will be updated the same whites?
+[10:42:40] Yeah, sometimes we'll update the same way depending upon like, you know, how optimized your writing there you can mention inside the function itself. How do you want to use it? Okay.
+[10:42:57] Next, Tarun, you have a question. Yeah, so outputs too, we have tied to layer three. Curiosity, you know, we can tie to layer two also, or it always both outputs have to be from the same layer.
+[10:43:09] You can. That's what I said. What do you want? You can have less
+[10:43:24] number of neurons go to L2. If you want more number of neurons similar go to L3. What's the problem? Problem is not a problem but it will impact the accuracy and other functions.
+[10:43:39] definitely definitely will impact because you are decreasing number of neurons accuracy will be go down the question is can we add it or not I said yes we can add it the question is can you can I add
+[10:44:02] I said, okay, you can add it, not a problem. But the complexity, you didn't ask me like, you know, whether it is going down or, you know, whether it is going to be okay. That after executing the problem only we know, right, Ashok? So, this is as a functional, wherever you want, you can add it. As I said, the
+[10:44:22] pointer, right? Whichever layer you want. For example, for the linear, I want only dense only. Only first layer only I want. Eight neurons is enough. You can add it, not a problem. Correct? Okay. Does this mean like for different, these final classification, we can take the output from different layer?
+[10:44:44] Yeah, thanks. Satya. So for each output we have separate neural networks or like the same one will be used? That's what I said, Satya. So you can use same. If you use L3 is the same, right? Somewhere if you want to connect to L2 also not a problem. Different also you can use it. That's what I said.
+[10:45:03] So complete all the input to output, complete input to L3, two different will use neural networks because weights will be, back powering will be two, right? So the weights may change. So how do we decide that one? We don't decide. The neural network will take care of those things, right?
+[10:45:23] between two outputs which will take something like that. So one beauty of Keras is when you fit automatically back propagation will take care whereas in PyTorch we need to define that is one of the complexity when you're using PyTorch. So there is a reason automatically back propagation and feed forward network is
+[10:45:44] take care and care by. When you just say fit, whereas in PyTorch you are defining. So according to the problem statement, according to the layers you are implementing, those things will be taken care of. Okay. So my question is like output one, we have like accuracy, we are getting better accuracy with one of the weights and output two, we are getting better accuracy with another weight.
+[10:46:02] We are getting better output with one of the weights which is like in average of both. So it will take the third one? No, both are different. Both different weights it will take. For each output it will take different weights and it will calculate like that.
+[10:46:19] confused. I'll show you the same visualization. Okay. Thank you. Yeah. Ashok, what's the question? Sir, my confusion on these outputs too, we took a dents of one because they say regression thing we took one.
+[10:46:36] Regression, we took it activation as linear. If you go to the outputs one, we have three different outputs. That's why we took it three and activation as softmax. You mentioned for multivalued you need to take softmax. My question is here for the regression,
+[10:46:56] there are huge number of things, that's why we are taking only one. If huge number of things are we are accommodating in one, why don't we, three things we can't accommodate in one and there also why don't we take linear. Wow, Venkat Ashok, you are going back again.
+[10:47:15] In classical machine learning, we have a classification and regression, right Ashu? Classification is like, for example, if you have three classes in the target or four classes, that is a classification, correct? Regression is finally, for example, max temperature is given. What is the regression? It is one value only.
+[10:47:34] minimum temperature something like that correct finally what you are getting only one value agree then coming to here how many values are getting can we get only one value we are getting out of three we have to define which one is right but whereas here regression is finally only one value whether it's 20 30 21 something like that correct
+[10:47:53] so that is the reason regression always single neuron is enough whereas in classification how many you have classes out of that which is the predicted class that is the reason we are going to have a three which is the predicted one which we need to understand right softmax clear sir thank you yeah next yugandhar yeah yeah
+[10:48:11] So can we define a functional pointer like dense 10 and relu activation function and define that line number 3 in cell 16? And we can use L2 of that function and L1 and L3 equal to that function pointer of L2? Yes, we can.
+[10:48:30] Functions are same like in a function how do we use in classical programming same thing. Okay. So we are using Keras here right and in PyTorch when it works we can actually choose that you want to do the computations with your CPU so Keras do
+[10:48:46] take care of it automatically or like yes we need to take care of those things so by default it will go to GPU or like no if GPU is available default it will go to GPU in order to force it okay okay
+[10:49:04] Done with the questions? Okay, so I'll do one thing. I'll do like a sample visualization so you'll get the clarity, okay? So now, okay, here let us build the model. How do you build the model? Model is equal.
+[10:49:21] model okay inputs is the inputs outputs is how many outputs we have outputs one and outputs two correct build it so once it is built now if want to see the model two different ways we can do it one is for example df dot
+[10:49:34] Keras dot utils dot flat model. OK, perfect. Then model. Here I can do file no need. Let us
+[10:49:44] layer names is true.
+[10:49:54] layer activation is to show shapes
+[10:50:04] is true show trainable is
+[10:50:13] So now design.
+[10:50:26] layer which consists of four neurons. Second layer which consists of four neurons connected with eight trainable. This eight is connected
+[10:50:41] connected to 10 trainable. Now from that, it again defined two pointers, right? One is for the output softmax, which is 10 with 3, and next one is an activation is a linear 10 with
+[10:50:55] one. Okay. So for example, if I want to see visually, I can say import visual Keras, then visual Keras, there is a
+[10:51:05] Let me recall a graph here, okay.
+[10:51:14] Model underscore function dot PNG.
+[10:51:23] So now you can see, right?
+[10:51:34] This is input, this is one output and this is another output. So now the model you have seen visually, you understand?
+[10:51:47] that number of neurons and everything correct good to go this is built by the model itself right now we can understand clearly
+[10:51:59] how it is building. Does trainable parameters increase since we are having two outputs, weights and biases, output one is different? Yes, definitely.
+[10:52:09] Regarding the weights or the number of parameters, they are affected
+[10:52:23] in the last layer, right? Previous layer weights are reused for both. Both we can add Jitendra. So both are different, right? One is linear, second is the
+[10:52:37] classification. If you have a classification both, then can be, but we are two different types. Yeah, but lastly, I can see that classification, the linear one is affecting one neuron last and that is
+[10:52:52] feeding back to the this third layer and so and the top one is also feeding back so then after that all the weights are reused if I back propagate only the last layer
+[10:53:05] weights are there are some more weights like one two three four five six seven eight okay i can't count but yeah only the
+[10:53:18] these connections are very simple very simple like when we are using pytorch there we need to define feed forward backward everything okay yeah as in
+[10:53:31] to define when you write fit, it will take care of all those things. Okay. That operation, it will take care of. And you have seen now very simple.
+[10:53:46] like how it is, you know, backpropagating. The visualization, if you build it, the weights automatically think like two different problems that combining in single problem. That's it. Okay. So different when you're
+[10:54:02] saying the weights can be distributed according to the model or weight can be reused or they can be again, according to the problem statement, they can be different back propagation can happen. That totally depends upon the problem
+[10:54:23] what you are using. The features are very related to this one. Sometimes you can change the features also from X1 to this one for these features for this one, these features for this one. So I can use the L1 input as a two inputs I'm using. For example, I'm different use. But in this case, all
+[10:54:46] the weights will be the same weights can come in and you can use it. For example, if I wanted different weights for the different outputs, then input will change. So L1 layer, inputs one, inputs two, you can keep it, and that will be connected to the output. So between the layers is similar. That way, you have two models are combining together, but execution speed will be decreased because two models parallelly, they have to work.
+[10:55:05] with different weights, okay? Yes. Yeah. So currently we are seeing this network of density layers, right? Same can be implemented using the convolution layers also, right? Like we are not giving every output to the every neuron. That can be also defined as functional programming here, right? In Keras.
+[10:55:23] No, no, see, see, Keras we are talking about together as a framework, right? How do you write a CNN, for example, okay? CNN is what like same neural network only. There if you introduce convolution layer, then after that, max pooling layer and something like, you know, drop
+[10:55:43] if you are writing, then that is known as a convolution layer. For example, if you are taking the, for example, you are taking RNN, right? So LSTM, simple RNN, simple LSTM, if you are adding that becomes a RNN. So here, instead of the neurons, in between what you are adding, convolution layers you are adding.
+[10:56:04] So how do you add the convolution layer? Sequentially, how do you add the sequential API? If you are using it as a functional, it's a functional API. So how to build that? We are using the framework. Understood? Okay. Clear? So the architecture is different. CNN is architecture. So that architecture, how do you implement in Keras, either functional or the
+[10:56:26] sequential or model subclassing. Yeah, yeah. So that's fine. But in CNM, there is a concept called we can split up to the n number of layers for the feature extraction and then densely connected layers, right? That's what I'm saying. Whatever you want to do it, that you can implement in Keras, right? That's what I'm saying. Okay.
+[10:56:46] architecture you define. Okay, the way how you are defining whatever the way you define it will accept it, right? Yeah, so I heard something like we can already predefined models on the CNN. So we can cut off and cut the layers from download. So pre trained models, because those definitions like what variables like we can get it, it is advanced or
+[10:57:04] It is advanced Uganda, it is not related to this function. Okay. Okay. Thanks. Yeah. Satya. Yes. So, so in the last lecture, in the Sunday, so we got to know that back propagation. So if we take the output as y then dy by dl, l3 and
+[10:57:24] DL3 by DL2 and DL2 by DL1 and DL1 by DLX is something we'll do the background equation. So I can see for DY by DL3 we can adjust the weight for the output but DL3 by DL2 we can't adjust it for both
+[10:57:39] outputs different one right so it will be a single variation of weights so how did how will it give the weights properly for both outputs linear and the classification is my question yeah i told you two things right just now before with another participant
+[10:57:55] ask the same question right yes same question repeating so I told you for example here the single input and I'm trying to connect to the two outputs correct so the same weights can be utilized yes now
+[10:58:09] Now, for example, I said this input have four features. These four features are related to Setosa classification and another four features are there which are connected to the output of the regression.
+[10:58:24] adding two inputs two different inputs then the two different weights will be there okay but now in this situation it is using the same weights okay for just I'm showing you a classical example how things are working now
+[10:58:36] you have to change it. Yes. Good to go now? Yes. Perfect. Vinod? Sir, my question is,
+[10:58:49] what purpose you are doing in multiple outputs. If you go for transformers, then it will be easier, right? So we know we are not talking about transformers.
+[10:59:06] So here we are talking about Keras framework. Can we do it in two different ways or not? What is the capability of Keras we are discussing now? So when you are saying Keras transformers, we can implement transformer through Keras framework.
+[10:59:24] only. So Keras is a framework. So can we build a transformer architecture in Keras? Yes, we can build it. So Keras is again different concept. So here I'm trying to explain you in Keras how many ways we can define the architecture. One is
+[10:59:43] the sequence shall be completed, second is the function. How do you transform architecture define? Can we write a transformer architecture Keras? Yes, we can. For example, if you want to train your own large language model, then I can use Keras to build that transformer, encoder, decoder, and everything. I can pass the data.
+[11:00:06] build Encyclopedia and then say the small language model, okay? Exactly. I mean, that's what I'm thinking. I mean, it's complicated, I feel, and go for Transformers. Yeah, when you... No, no, no. Don't say go for Transformers. Transformers is an architecture, you know, okay? Yeah. Transformer and architecture. So that architecture we can build through
+[11:00:23] Yeah, understood. Now if it is a huge data set, then we can go for it. Again, you're not understanding, you're rotating again. You're looping over only C. Think like CNN is different architecture.
+[11:00:41] Now, how do you build CNN? Use Keras. We can build it. Use Keras, we can build CNN, RNN, LSTM. Transformer also I told you, right? Yes. Now, what purpose you are building Transformer for a huge amount of time?
+[11:01:03] of data you want to train and build a small language model that is different. What purpose of CNN, an image is given, classify the image. What purpose of RNN, classify the text predictor, the next text, something like that. If the memory is less, I'll go with LSTM, right? So all these concepts we can do with, instead of Python, we can do with Keras, which makes
+[11:01:21] you your life easy to build that architecture now understood yeah okay so don't put transformer here transformer is different architecture right with combination of encoder and decoder the purpose of transformer is different purpose of CNN is different purpose of RNN is different so those architectures we can build through Keras easily
+[11:01:41] Okay, sorry, I mean, this framework will be applied to Transformers as well. Exactly. Now you got it. Yeah. If you want to build, for example, you said, have you got a lot of documents, I want to build my own language model instead of going for rag or something, then you can use Keras.
+[11:02:00] So now we have seen, like functional, we build the architecture functional. Now after that, what we need to do, we need to compile the model, right?
+[11:02:19] How do you compile? Model.compile. After this, we'll take a break, okay? I know people are waiting for the break, so we'll just finish it and we'll take the break, okay? So, optimizer, let us take the same, Adam. Now tell me, what is the last?
+[11:02:36] Here we have two loss, right? One is categorical, correct? Second is not categorical, not binary. It is a mean square error. So now here we have two losses for the output. Correct one is? Yeah.
+[11:02:57] I can understand your, you know, after connecting with you people, so I can understand like next, what is coming in, in the chat, right? So that's what I said, Suresh. So just give me two, three minutes. We'll finish it and we'll take a break. Okay. So outputs one.
+[11:03:18] Now, tell me output one is a classification problem, correct? How many classes we have? Three classes, multi-class. So, what type of class we use? Categorical cross entropy. Output two is only one output, right? That is a mean square error we done. Then, coming to the matrix also, like Pasanta said,
+[11:03:39] accuracy, right? Now you will get idea clearly. Now matrix tell me, in classification problem, what is the matrix? Accuracy. Whereas in a regression problem, what is accuracy? Mean square error, correct? So we write here, outputs one is classification problem. What should I write?
+[11:03:57] accuracy, right? Then coming to outputs two, what do we have? I can take mean average error or mean square error, MSC we call it. Done. This line is clear, model.compile. We have two outputs.
+[11:04:19] a categorical output. This is the categorical because three we have. This is the regression. So I just write as a MSC. After model compile, what should we do now? Model.fit. Okay. Now X train is there, right? X train is the common. But Y train, now we have two, right?
+[11:04:33] two in the sense outputs one is which one outputs one y-train correct then outputs two y-synthetic train i think right yeah
+[11:04:43] Why is synthetic train correct?
+[11:04:55] Then similar epochs we can write. Epochs is equal to 100 and batch size will be.
+[11:05:08] And then if you want to use TensorFlow, we can say call back, sir. But OK, this is good. OK, verbose.
+[11:05:23] Verbose is our wish, right? If you don't write it, it will take you for one. If you write verbose zero, you don't see that.
+[11:05:34] Why do we need 100 epochs here when the data is very less?
+[11:05:49] What is ideal? Is it like more number of oxides? Ideally more number is good but how many more number is we have to use Keras tuner which will tell you what is the best one.
+[11:06:03] So in the deep learning, we can use Keras tuner. See, writing the code is different, optimizing the code is different, and going for the
+[11:06:22] So when you are in the industry, for example, in academics what we do, generally we write a simple code, correct? But when it comes to the, for example, industry, the simple code will not go with the production, right?
+[11:06:43] So we need to have a code which can go for enterprise ready. So there we need to understand, we cannot spend more time also. Like you know what I'm saying, when your leader is saying that, okay, build a model, you are saying 20 days to build it. And because I'm hyper parameter tuning, I'm looking for different permutation and combinations, right? So instead of that,
+[11:07:03] I can use Keras tuner and say that, okay, this is what we got it. So which is like, you know, time you're saving, correct? Yeah. Okay. So then we need to model.evaluate and we can say scores of one, for example, test X test with Y test and Y synthetic test, correct?
+[11:07:23] So we can see output one accuracy is how much? 100%. And outputs two accuracy is how much? Mean square error is how much? 0.964 something. Correct. So because we are using same data, definitely we are going to see no classification problem. We are trying to convert into regression. We'll get that mean square error or something like that.
+[11:07:42] So in real time, this will be different. So good now. This is a complete functional API. Any questions? Good to go. Give a thumb so I can understand that you are with me. Okay, great. Okay, perfect. So now,
+[11:07:59] I understand that you understand two things. One is sequential and the function. Okay. I know people are eagerly waiting for the break. So let us take a break. It's now 1107. Let us come back by 1130. Is it okay?
+[11:08:18] 11.30 is good? Yes, perfect. Okay, perfect. Okay. I'll stay here for one, two minutes. Anybody have any questions? You can. This is one basic question. Generally, we use the data, but here
+[11:08:33] use it only if it what is the difference I mean why sir only fit below the last few lines you added this one you mean to say not here not to the standard scalar to the model to the model
+[11:08:49] the model. Why is it fit? Yeah, model.fit. Generally we use fit and transform, right? No, why fit and transform? Fit and transform is for standard scalar conversion. This is training.
+[11:09:03] Training, right? Any model we just tried fit only, right? That's what we learned, right? Yeah, so we did the CNN problem for this hacker
+[11:09:18] on thing the biggest trouble there was given a convolution layer filter size what is the output size then feeding that as an input so for the next layer so now when we use this model does it do that automation automatically or we
+[11:09:38] still have that burden of input and output size? That's what I'm saying, Tarun. That input and output size, you have to use optimizer functions, right? Keras tuner I'm talking about, right? When you implement Keras tuner, definitely it will take care of those things, okay? Okay.
+[11:09:58] Because my hand calculating was very troublesome there. Yeah. Okay. Thank you. Yeah. So Pranali, you can say in sequential, we printed weights model zero, right? So you can write zero zero to get that. Okay. We can get the thing. Yeah. Sharath Chandra. Yes. So last week we learned
+[11:10:20] about PyTorch and all those things. And this is like a framework on top of this. So are we using anything more or this will be like the one which we will be using actually in the industry? See, as I told you in the beginning, Sharath, PyTorch is the framework. If you compare now with a Keras, easier you feel, correct? Compared to PyTorch writing.
+[11:10:42] It's more like a wrapper on top of all this. So another thing is if you build a PyTorch model bringing to Keras a lot of changes you need to make whereas in Keras is a compatibility easily when you save the model we can put into PyTorch models also. So that is the reason now industry is adapting for the compatibility. So Keras is having more compatibility.
+[11:11:00] That is the reason industry is adapting with the Keras. Okay. Okay. Yeah. Raikesh. Yeah. Professor, I have a couple of questions here. Can you go to our lecture? Yeah. Okay. This one or this one? No, yeah, this one.
+[11:11:18] So if you see output layer, we have two sets of neurons, one for classification problem and another one for regression problem. Exactly. And if you come to last hidden layer, we have only single set of neurons. That means those neurons in the last hidden layer are doing multiple tasks. Exactly.
+[11:11:35] So they're contributing in participation. Yeah. Okay. Yeah, I mean, previous pictures. No, think like, I will tell you, okay. You have a building, okay. So in the building, you have
+[11:11:54] You have two doors to enter it and consume whatever you have in that. For example, you are having tea, coffee, then something like that. In one room, you have tea, coffee. In another room, you have some food or something. And coming out of the two different doors, you are coming out.
+[11:12:15] architecture is same right but the problem statement the number of neurons instead of repeating they are saying use the same number so in this what happened the parallelly they can work each other instead of rising a different sequential problem parallelly they will work with each other and the same weights will be utilized over there and here and then we are trying to classify and regression right so
+[11:12:35] That's where it is useful. Okay. Okay. So it's like feature extraction is same in the last layer. So those features are used by different threads of neurons in the output layer. Exactly. Yeah. Okay. One more small question. Why synthetic we created, right? Yeah, we created it. Yeah. Yeah.
+[11:12:57] tampering the data, input data, here in this particular example. Rakesh, this is just to show you an example. Okay, got it. So actually we are tampering the data. Yeah, so that totally understood. Okay, so for example, if I'm teaching you cyber security, definitely I'll tamper chargeability, right? To show you something like, you know, chargeability
+[11:13:17] We can be tampered in this way. So that is academic purpose. Similar way, I'm trying to explain you how outputs are there. I didn't took the real one, just a sample. So definitely I'm tampering. Totally agree. Thanks. Yeah, welcome. Yes, Vinod. Go ahead. Sir, one question.
+[11:13:39] You said functional APIs and what kind of APIs you're using? What kind of API? The name is functional API. Okay. Application programming interface in the sense they're given like wherever you want, you can integrate in Python or somewhere you can call them. Okay. You create a, using a fast API, you can build a endpoint and call it. Yeah. For example,
+[11:14:02] HTTPS and REST APIs. So we are not using any protocols here? No, no, no. Protocols is like when you are converting that into REST API, right? Okay. So this is a functional API why we are saying means easily we can callable that is the name is given API. So it's not actually an API. Okay. So real API is one, once you deploy your model, expose the model
+[11:14:30] using REST API, SOAP API, something like that. So when you're exposing an API, then you go with the HTTPS, okay, as a secure or unsecured URL. People can consume your data through the endpoint as a secure or unsecured. So it's going to be synchronous, right? That if you are using fast API, it can be asynchronous. Okay. Thank you.
+[11:14:47] First API session at that time, I'll show you everything, don't worry. The deployment session is there, okay? Okay, thanks. Thanks everyone. So we'll take a break and we'll be back, okay?
+[11:14:57] You don't know.
+[11:15:06] I don't know.
+[11:15:15] This is Donakoda.
+[11:15:26] I saved a lot for you. I saved a lot for you.
+[11:15:36] I am going to hit you. Hit me.
+[11:15:46] Okay, thank you.
+[11:16:00] Don't look. Don't look.
+[11:16:11] Mom, I didn't do much. This is the only marginal. You should sleep here.
+[11:16:20] I'm gonna let him down.
+[11:16:30] No, no, no, no, no.
+[11:16:39] My body's efficient.
+[11:16:47] Bye bye.
+[11:16:57] Now, we're going to do a little bit more.
+[11:17:05] No, no.
+[11:17:25] Nanny?
+[11:17:35] I don't know.
+[11:17:43] Thank you.
+[11:17:51] Yes.
+[11:18:00] move move
+[11:18:14] Bye!
+[11:18:22] Leave it there.
+[11:18:31] Hi lady.
+[11:18:40] I am doing it now.
+[11:18:54] It's okay.
+[11:19:04] Do you want me to do it?
+[11:19:18] I'm sorry.
+[11:20:13] What are you doing?
+[11:20:21] you
+[11:20:36] . So, what is the problem?
+[11:20:44] Huh? Huh?
+[11:20:53] How do you describe it?
+[11:21:03] One more round. One more round. One more.
+[11:21:12] Hope it's good.
+[11:21:21] Say what do you say my dear?
+[11:21:30] I'm here baby.
+[11:21:44] I don't know
+[11:22:08] Thank you.
+[11:22:53] Bye!
+[11:23:02] Mmm.
+[11:23:13] So I'm going to apply a little bit of cream.
+[11:23:28] Is it good? Is it good?
+[11:23:38] You have them now. Right, you have one.
+[11:23:48] Yeah.
+[11:23:58] for joining us live from the
+[11:24:07] Okay.
+[11:24:16] That's the moment.
+[11:24:27] you
+[11:24:41] Thank you.
+[11:25:16] Okay.
+[11:25:50] Mm-hmm.
+[11:26:10] It's warm in here.
+[11:27:10] for watching.
+[11:27:24] Yeah.
