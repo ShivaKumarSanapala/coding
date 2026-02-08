@@ -438,6 +438,208 @@ Whichever k gives the lowest MSE on validation set is the one you use for predic
 
 ---
 
+### Model 6: Exponential Smoothing (Single Exponential Smoothing)
+
+**Timestamp: 09:41:41 - 10:01:43**
+
+#### **Why Exponential Smoothing?**
+
+Moving average has a limitation: it gives **equal weight** to all recent observations and **zero weight** to older ones.
+
+**Problem**: What if older data is still somewhat important, but you want to emphasize recent observations more?
+
+**Solution**: Use exponential smoothing with **exponentially decreasing weights**:
+- Recent observations → High weight
+- Older observations → Lower weight (decreasing exponentially)
+- Very old observations → Almost zero weight
+
+#### **The Exponential Smoothing Formula**
+
+**Recurrence Relation:**
+$$S_t = \alpha y_t + (1 - \alpha) S\_{t-1}$$
+
+**Where:**
+- $S_t$ = Smoothed value (forecast) at time $t$
+- $y_t$ = Actual observation at time $t$
+- $\alpha$ = Smoothing parameter (0 ≤ α ≤ 1)
+- $(1-\alpha)$ = Weight on previous smoothed value
+- **Base Case**: $S_1 = y_1$ (first smoothed value equals first observation)
+
+**Interpretation:**
+- $\alpha$ controls how much weight goes to the current observation
+- $(1-\alpha)$ controls how much weight goes to historical data
+- This is **recursive** - each forecast depends on the previous forecast
+
+#### **Understanding the Recursion**
+
+When you expand the formula recursively, you get:
+
+$$S_t = \alpha y_t + (1-\alpha)[\alpha y\_{t-1} + (1-\alpha)S\_{t-2}]$$
+
+$$S_t = \alpha y_t + \alpha(1-\alpha)y\_{t-1} + (1-\alpha)^2 S\_{t-2}$$
+
+Expanding further:
+$$S_t = \alpha y_t + \alpha(1-\alpha)y\_{t-1} + \alpha(1-\alpha)^2 y\_{t-2} + \ldots$$
+
+**Weights Distribution:**
+- Coefficient of $y_t$ = $\alpha$
+- Coefficient of $y\_{t-1}$ = $\alpha(1-\alpha)$
+- Coefficient of $y\_{t-2}$ = $\alpha(1-\alpha)^2$
+- And so on... decreasing exponentially!
+
+#### **Impact of α (Alpha)**
+
+**When α = 0.9 (Fast Dampening):**
+- $y_t$ gets 90% weight
+- $y\_{t-1}$ gets 9% weight
+- $y\_{t-2}$ gets 0.9% weight
+- Older observations → nearly zero weight
+- **Result**: Very responsive to recent changes
+
+**When α = 0.5 (Medium Dampening):**
+- $y_t$ gets 50% weight
+- $y\_{t-1}$ gets 25% weight
+- $y\_{t-2}$ gets 12.5% weight
+- Older observations → still meaningful weight
+- **Result**: Balanced between history and recent data
+
+**When α = 0.1 (Slow Dampening):**
+- $y_t$ gets 10% weight
+- $y\_{t-1}$ gets 9% weight
+- Older observations → significant weight
+- **Result**: Heavily influenced by historical average
+
+#### **Practical Example: Time Series Forecast**
+
+**Timestamp: 09:49:16 - 09:54:57**
+
+Suppose you have this time series:
+```
+Time (t):        1    2    3    4    5    6    7    8    9    10   11   12
+Observation:    71   70   69   68   69   71   72   71   70   71   72   70
+```
+
+**Step 1: Set Base Case**
+$$S_1 = y_1 = 71$$
+
+**Step 2: Calculate S₂ using α = 0.1**
+$$S_2 = 0.1 \times 70 + 0.9 \times 71 = 7 + 63.9 = 70.9$$
+
+**Step 3: Calculate S₃ using same formula**
+$$S_3 = 0.1 \times 69 + 0.9 \times 70.9 = 6.9 + 63.81 = 70.71$$
+
+Continue this for all time points...
+
+**Step 4: Calculate Residuals and MSE**
+
+```
+Time  | y_t  | S_t   | Error    | Error²
+------|------|-------|----------|--------
+1     | 71   | 71.0  | 0.0      | 0.00
+2     | 70   | 70.9  | -0.9     | 0.81
+3     | 69   | 70.71 | -1.71    | 2.92
+...   | ...  | ...   | ...      | ...
+12    | 70   | ?     | ?        | ?
+```
+
+**Sum of Squared Errors** = 208.94 (for α = 0.1)
+
+#### **Finding Optimal α (Grid Search)**
+
+Since you don't know which α is best, test multiple values:
+
+```
+α     | MSE     | Rank
+------|---------|------
+0.1   | 208.94  | 5 (worst)
+0.2   | 195.43  | 4
+0.3   | 182.15  | 3
+0.4   | 171.28  | 2
+0.5   | 160.29  | 1 (best) ✓
+0.6   | 165.47  | 3
+0.7   | 172.56  | 4
+```
+
+**Finding 0.5 is best:**
+1. Start with coarse grid: 0.1, 0.2, ..., 1.0
+2. Find that 0.5 is best
+3. Refine around 0.5: Try 0.45, 0.46, 0.47, 0.48, 0.49, 0.50, 0.51, 0.52, 0.53, 0.54, 0.55
+4. If 0.52 is best, refine further: 0.515, 0.516, 0.517, ..., 0.525
+5. Use the α with **lowest MSE**
+
+**Why Recursion Matters:**
+```
+You can't "unroll" the full formula easily because 
+S_t depends on S_{t-1}
+S_{t-1} depends on S_{t-2}
+... and so on
+
+So you compute step-by-step forward in time!
+```
+
+#### **Key Characteristics**
+
+**Advantages:**
+- ✓ Captures weighted history (recent > older)
+- ✓ Single parameter (α) to tune
+- ✓ Computationally efficient
+- ✓ Works well with noisy data
+
+**Limitations:**
+- ❌ **Doesn't capture trend** (subject of "Double Exponential Smoothing")
+- ❌ Lags behind actual trend changes
+- ❌ Only one parameter to control behavior
+
+#### **What is "Dampening"?**
+
+**Definition**: Reducing importance over time
+
+- As observations get older, their influence **dampens** (reduces)
+- **Fast dampening** (high α): Older data quickly becomes irrelevant
+- **Slow dampening** (low α): Older data remains important longer
+- Speed of dampening controlled by **α value**
+
+**Related Term**: **Attenuating** = same concept, reducing over time
+
+---
+
+## Q&A Session Highlights (Continued)
+
+**Timestamp: 09:41:41 - 10:01:43**
+
+### Q5: Does exponential smoothing capture trends?
+**A**: 
+- Partially - it gives higher importance to recent observations
+- But it doesn't **explicitly** capture trend patterns
+- For better trend capture: **Double Exponential Smoothing** (next model)
+- Single smoothing works better with short-term fluctuations
+
+### Q6: Why is α a hyperparameter?
+**A**: 
+- Must be discovered through experimentation
+- No mathematical formula to derive optimal α
+- Use grid search on validation data
+- Try range of values (0.1, 0.2, ..., 0.9) and pick best MSE
+
+### Q7: How is residual calculated?
+**A**: 
+$$\text{Residual} = y_t - S_t = \text{Actual} - \text{Predicted}$$
+
+Example: If actual = 268 and predicted = 289.8:
+$$\text{Residual} = 268 - 289.8 = -21.8$$
+
+**Why it matters**: Sum of squared residuals gives you MSE to compare models
+
+### Q8: What happens when α < 0.5?
+**A**: 
+- Recent observations get less than 50% weight
+- Older observations get more influence
+- Slower dampening - takes longer to forget old data
+- Good for very stable trends
+- Bad for data with sudden changes
+
+---
+
 ## Model Evaluation
 
 **Timestamp: 09:20:36 - 09:22:11**
@@ -598,7 +800,7 @@ Complexity    ↑
 ## Advanced Topics Covered
 
 ### Yet to be covered:
-- Exponential smoothing
+- Double Exponential Smoothing (with trend)
 - ARIMA models
 - Seasonality detection
 - RNNs for time series
@@ -615,10 +817,11 @@ Complexity    ↑
 | **Multiplicative Trend** | $\hat{y}_{t+1} = y_t \times \frac{y_t}{y_{t-1}}$ | ⭐⭐ | % growth |
 | **Simple Average** | $\hat{y}_{t+1} = \frac{1}{n}\sum y_i$ | ⭐ | Noisy data |
 | **Moving Average** | $\hat{y}_{t+1} = \frac{1}{k}\sum_{i=t-k+1}^{t} y_i$ | ⭐⭐ | Trending data |
+| **Exponential Smoothing** | $S_t = \alpha y_t + (1-\alpha)S_{t-1}$ | ⭐⭐⭐ | Weighted history |
 
 ---
 
-**Last Updated**: Session timestamp 09:37:12 - 09:39:11  
-**Status**: Covers Introduction through Moving Average with Practical Examples  
-**Coverage**: ~34 minutes of lecture (09:05:52 - 09:39:11)  
-**Next Topics Expected**: Seasonality, Exponential Smoothing, ARIMA, RNNs
+**Last Updated**: Session timestamp 09:41:41 - 10:01:43  
+**Status**: Covers Introduction through Exponential Smoothing with Practical Examples  
+**Coverage**: ~56 minutes of lecture (09:05:52 - 10:01:43)  
+**Next Topics Expected**: Double Exponential Smoothing, ARIMA, Seasonality, RNNs
