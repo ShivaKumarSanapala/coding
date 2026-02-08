@@ -797,31 +797,463 @@ Complexity    ↑
 
 ---
 
-## Advanced Topics Covered
+## Advanced Topics - Double Exponential Smoothing
+
+**Timestamp: 10:17:34 - 10:28:26**
+
+### Introduction to Holt's Method (Two-Parameter Method)
+
+**Problem with Single Exponential Smoothing**: It does not explicitly capture trend (the "hike" component)
+
+**Solution**: Use **Double Exponential Smoothing** (also called **Holt's Two-Parameter Method**)
+
+### The Two Equations
+
+**Equation 1 - Level Smoothing:**
+$$S_t = \alpha y_t + (1-\alpha)(S_{t-1} + B_{t-1})$$
+
+**Equation 2 - Trend Smoothing:**
+$$B_t = \gamma(S_t - S_{t-1}) + (1-\gamma)B_{t-1}$$
+
+**Where:**
+- $S_t$ = Smoothed value (forecast of actual values)
+- $B_t$ = Trend/Hike (forecast of the rate of change)
+- $y_t$ = Actual observation at time $t$
+- $\alpha$ = Smoothing parameter for level (0 ≤ α ≤ 1)
+- $\gamma$ = Smoothing parameter for trend (0 ≤ γ ≤ 1)
+
+### Understanding the Equations
+
+**Level Equation (S_t):**
+- Adjusts directly for the trend of the previous period ($B_{t-1}$)
+- Prevents lagging behind actual values
+- Brings $S_{t-1}$ to the right base of current value by adding previous trend
+
+**Trend Equation (B_t):**
+- Updates the trend based on difference between last two smoothed values
+- $(S_t - S_{t-1})$ = Observed change in current period
+- Uses exponential smoothing on the trend itself
+- Higher γ = faster dampening of past trends
+- Lower γ = slower dampening, more weight to historical trends
+
+### Key Difference from Single Exponential Smoothing
+
+| Aspect | Single Exponential | Double Exponential |
+|--------|------------------|-------------------|
+| **Parameters** | 1 (α) | 2 (α, γ) |
+| **Captures Level** | ✓ | ✓ |
+| **Captures Trend** | Implicit | Explicit |
+| **Lag Behavior** | Lags behind trend | Reduces lag |
+| **Use Case** | Stable data | Trending data |
+
+### Base Cases for Double Exponential Smoothing
+
+**For S (Level):**
+$$S_2 = y_1$$
+
+**For B (Trend):** Three common methods:
+
+**Method 1 - Simple Difference:**
+$$B_3 = y_2 - y_1$$
+Simple to compute, uses first two points
+
+**Method 2 - Warm-up Period (Robust):**
+$$B_5 = \frac{(y_2 - y_1) + (y_3 - y_2) + (y_4 - y_3)}{3}$$
+Average of first 3 differences, uses warm-up period of 4 points
+
+**Method 3 - Overall Trend:**
+$$B_{11} = \frac{y_{10} - y_1}{9}$$
+Overall trend over longer period, ignores individual fluctuations
+
+> **Choose one of these three methods** - don't use all of them. Whichever fits your context best.
+
+### Practical Example
+
+**Data:** Time series with 12 observations showing trend
+
+**Process:**
+1. Set base cases: $S_2 = y_1$ and $B_3 = y_2 - y_1$ (using Method 1)
+2. Grid search α and γ: Try 11×11 = 121 combinations
+   - α from 0.0 to 1.0 (step 0.1)
+   - γ from 0.0 to 1.0 (step 0.1)
+3. Calculate $S_t$ and $B_t$ for each combination
+4. Compute MSE for each combination
+5. Find (α, γ) pair with **lowest MSE**
+6. Refine grid around best values (coarse → fine refinement)
+
+### Making Forecasts
+
+**One Period Ahead:**
+$$F_{t+1} = S_t + B_t$$
+
+**M Periods Ahead:**
+$$F_{t+M} = S_t + M \times B_t$$
+
+**Interpretation:** 
+- $S_t$ = Current level
+- $B_t$ = Constant trend per period
+- Multiply trend by number of periods ahead (M)
+
+**Example:** If $S_{10} = 1000$ and $B_{10} = 50$:
+- 1 year forecast: $F_{11} = 1000 + 50 = 1050$
+- 2 year forecast: $F_{12} = 1000 + 2×50 = 1100$
+- 5 year forecast: $F_{15} = 1000 + 5×50 = 1250$
+
+### Comparison: Single vs Double Exponential Smoothing
+
+| Scenario | Better Method |
+|----------|--------------|
+| Salary data (with growth) | Double Exponential ✓ |
+| Temperature fluctuations | Single Exponential |
+| Stock prices (with trend) | Double Exponential ✓ |
+| Stable room temperature | Single Exponential |
+
+### When to Use Double Exponential Smoothing
+
+✓ **Use when:**
+- Data shows clear upward or downward trend
+- Trend is expected to continue
+- You need explicit trend modeling
+- Short time series with consistent growth
+
+✗ **Don't use when:**
+- Data is stationary (no trend)
+- Trend is non-linear
+- Seasonality is present (use Triple Exponential instead)
+
+---
+
+## Advanced Topics - Triple Exponential Smoothing
+
+**Timestamp: 10:31:26 - 10:35:40**
+
+### Introduction to Holt-Winters Method (Three-Parameter Method)
+
+**Problem with Double Exponential Smoothing**: It ignores **seasonality** (periodic patterns)
+
+**Solution**: Use **Triple Exponential Smoothing** (also called **Holt-Winters Method**)
+
+### What is Seasonality?
+
+**Definition**: Periodic fluctuations that repeat at regular intervals
+
+**Real-World Examples:**
+- **Retail Sales**: Peak during Christmas, decline after holidays
+- **Temperature**: High during day, low at night
+- **YouTube Watch Hours**: Higher on weekends than weekdays, higher in evenings than daytime
+- **Diwali Sales**: Lamp sales spike during Diwali season each year
+- **Ice Cream Sales**: Higher in summer than winter
+
+**Seasonal Patterns:**
+- **Weekly**: Different behavior on weekdays vs weekends
+- **Monthly**: Certain days of month see more activity
+- **Yearly**: Annual cycles (holiday seasons, weather patterns)
+
+### The Three Equations
+
+Double Exponential had:
+- Level equation: $S_t = \alpha y_t + (1-\alpha)(S_{t-1} + B_{t-1})$
+- Trend equation: $B_t = \gamma(S_t - S_{t-1}) + (1-\gamma)B_{t-1}$
+
+**Triple Exponential adds:**
+
+**Equation 3 - Seasonal Smoothing:**
+$$I_t = \beta \frac{y_t}{S_t} + (1-\beta)I_{t-L}$$
+
+**Where:**
+- $I_t$ = Seasonal component at time $t$
+- $\beta$ = Smoothing parameter for seasonality (0 ≤ β ≤ 1)
+- $L$ = Length of seasonal cycle (seasonality period)
+- $(1-\beta)$ = Weight on previous seasonal value from L periods ago
+
+### Understanding Seasonality in Triple Exponential
+
+**What is L (Season Length)?**
+- One year = L = 12 (if monthly data)
+- One week = L = 7 (if daily data)
+- One month = L = 4 (if weekly data)
+
+**Seasonal Equation Behavior:**
+- Unlike level and trend which use previous period ($I_{t-1}$)
+- Seasonality uses value from L periods ago ($I_{t-L}$)
+- This captures the seasonal pattern from the same time last period
+
+**Example:** If L = 12 (monthly data):
+- For January 2026, look at January 2025's seasonal pattern
+- Diwali sales 2026 influenced by Diwali sales 2025
+
+### The Three Parameters
+
+| Parameter | Controls | Range | Effect |
+|-----------|----------|-------|--------|
+| **α (alpha)** | Level smoothing | 0-1 | How much to emphasize current value |
+| **γ (gamma)** | Trend smoothing | 0-1 | How fast trends dampen |
+| **β (beta)** | Seasonal smoothing | 0-1 | How fast seasonal patterns change |
+
+### How Seasonality is Captured
+
+**Multiplicative Seasonality:**
+$$F_{t+m} = (S_t + m \times B_t) \times I_{t+m-L}$$
+
+The seasonal factor **multiplies** the level+trend forecast:
+- If seasonal factor = 1.2 (20% higher in this season)
+- Forecast = Base forecast × 1.2
+
+**Why Multiplicative?**
+- Seasonality increases with level
+- If sales are higher, seasonal peaks are also higher
+- More realistic for growing time series
+
+### Grid Search for Three Parameters
+
+Finding optimal α, γ, β:
+
+**Coarse Grid:**
+- Try: 0.0, 0.1, 0.2, ..., 1.0
+- Total combinations: 11 × 11 × 11 = 1,331 combinations
+- Select best combination
+
+**Fine Grid:**
+- Around best coarse grid values
+- Refine to step 0.01
+- Total combinations: 21 × 21 × 21 = 9,261 (if needed)
+
+**Result:** Choose (α, γ, β) with lowest MSE
+
+### When to Use Triple Exponential Smoothing
+
+✓ **Use when:**
+- Data shows seasonality (repeating patterns)
+- Trend is also present
+- Examples: Retail sales, weather data, energy consumption
+
+✗ **Don't use when:**
+- No seasonal patterns
+- Season length is unclear
+- Non-stationary trend (ARIMA preferred)
+
+### Model Selection Hierarchy
+
+```
+Is there seasonality?
+├─ NO → Is there trend?
+│       ├─ NO → Single Exponential Smoothing
+│       └─ YES → Double Exponential Smoothing (Holt)
+└─ YES → Triple Exponential Smoothing (Holt-Winters)
+```
+
+---
+
+## Summary: Exponential Smoothing Family
+
+**Timestamp: 10:35:40 - 10:37:10**
+
+### The Three Models Compared
+
+| Model | Parameters | Captures | Use Case |
+|-------|-----------|----------|----------|
+| **Single (SES)** | α | Level | Stationary data |
+| **Double (Holt)** | α, γ | Level + Trend | Trending data |
+| **Triple (Holt-Winters)** | α, γ, β | Level + Trend + Seasonality | Seasonal trending data |
+
+### Parameter Tuning Approach
+
+1. **No parameters are "learned"** - they are **tuned** via grid search
+2. **Why?** These models are decades old, developed before machine learning
+3. **How?** Try multiple values, pick parameters with lowest MSE
+4. **Advantage**: Works well with short time series (10-100 points)
+
+### Why Exponential Smoothing Still Matters
+
+**Legacy:** Developed 4+ decades ago, predates machine learning
+
+**Modern Relevance:** Still prevalent because:
+- Works with very short time series
+- No need for large amounts of data
+- Interpretable parameters
+- Fast computation
+- Often outperforms complex methods on small datasets
+
+---
+
+## Introduction to ARIMA Models
+
+**Timestamp: 10:37:10 - 10:37:30** (Brief intro, continued in next session)
+
+### The Landscape of Time Series Models
+
+**Progression:**
+1. ✓ Simple Statistical Models (Naive, Trend, Average)
+2. ✓ Moving Average Models
+3. ✓ Exponential Smoothing Family (Single, Double, Triple)
+4. → **ARIMA Models** (next step)
+5. Deep Learning (LSTM, RNNs, Transformers)
+
+### ARIMA Family
+
+**ARIMA** = AutoRegressive Integrated Moving Average
+
+**Related Models:**
+- **ARIMAX**: ARIMA with eXogenous variables
+- **SARIMA**: Seasonal ARIMA
+- **VARIMA**: Vector ARIMA (multiple time series)
+
+### When to Transition from Exponential Smoothing to ARIMA
+
+**Use Exponential Smoothing when:**
+- Time series is short (< 100 points)
+- Clear level, trend, or seasonality visible
+- Interpretability matters
+- Need quick solution
+
+**Use ARIMA when:**
+- Longer time series (100+ points)
+- Need statistical significance testing
+- Data requires differencing
+- More complex autocorrelation patterns
+- Automated model selection desired
+
+### Next Steps
+
+After break: Detailed ARIMA discussion covering:
+- AR (AutoRegressive) component
+- I (Integrated) component
+- MA (Moving Average) component
+- Parameter selection (p, d, q)
+
+---
+
+## Q&A Session Highlights - Exponential Smoothing Deep Dive
+
+**Timestamp: 09:41:41 - 10:01:43** + **10:28:26 - 10:32:45**
+
+### On Dampening and Alpha
+
+**Q:** What is dampening?
+**A:** Reducing importance of older observations over time
+- Fast dampening (high α, e.g., 0.9): Recent data gets 90% weight, older gets minimal
+- Slow dampening (low α, e.g., 0.1): More balanced weights, older data still matters
+- **Alternative term**: Attenuating (same concept)
+
+**Q:** Why is dampening important?
+**A:** Recent data is typically more relevant than old data
+- Old salary from 10 years ago less relevant than recent salary
+- Recent trend more predictive than historical trend
+- Controls how quickly the model "forgets" the past
+
+### On Alpha Selection
+
+**Q:** Is alpha a random constant?
+**A:** No - discovered through **grid search** on validation data
+- Try values: 0.1, 0.2, 0.3, ..., 0.9
+- Find α with lowest MSE
+- Refine: If 0.5 is best in coarse grid, try 0.45-0.55
+- Continue refining until optimal value found
+
+**Q:** Does alpha auto-increment like learning rate scheduler?
+**A:** No - alpha is **fixed** for the entire forecasting period
+- Not a learnable parameter
+- Not updated over time
+- Set once via grid search, use throughout
+
+### On Base Case Selection
+
+**Q:** What about S_2, S_3 in Double Exponential?
+**A:** 
+- $S_2 = y_1$ (always, for both single and double)
+- $B_3 = y_2 - y_1$ (earliest trend estimate)
+- Earliest forecast possible: $F_4$ (Year 4)
+- First 3 time points used to establish base case
+
+**Q:** Can we set S_3 = y_2, S_4 = y_3?
+**A:** Yes, valid approach but
+- You lose the advantage of using more data
+- Not standard practice
+- Wastes the full history concept
+
+### On Model Limits
+
+**Q:** What if alpha < 0.5? Don't older points get higher weight?
+**A:** No - always recent gets higher weight due to multiplication
+- Even with α = 0.1: recent gets 10%, older get 9%, 8.1%, 7.29%, ...
+- When you multiply by number < 1, always dampens
+- Higher α just dampens **faster**
+- Lower α means **slower dampening** but still dampening
+
+**Q:** Does exponential smoothing capture trend?
+**A:** Partially
+- Single exponential: Implicit trend capture (recent emphasis)
+- Not explicit like Double Exponential
+- Solution: Use Double Exponential for explicit trend
+
+### On Gamma Parameter
+
+**Q:** Higher gamma = higher importance to past trend?
+**A:** Incorrect - Higher γ means **faster dampening** of past trends
+- Like alpha, γ controls decay/dampening rate
+- Higher γ: Recent trends matter more, past trends forgotten faster
+- Lower γ: Past trends still influential longer
+- Always recent > old, just different dampening speeds
+
+**Q:** Is gamma used in warm-up period?
+**A:** No - gamma used **after** warm-up
+- Warm-up period: Calculate initial $B$ exactly (no γ)
+- After warm-up: Use γ to smooth trend updates
+- Warm-up = establishment phase, γ = prediction phase
+
+### On Prediction Windows
+
+**Q:** How do we calculate accuracy without future values?
+**A:** You can only calculate accuracy on **labeled data**
+- Use historical data that you know the actual values
+- Divide time series: train → validation → test
+- Test on validation set (you know actual values)
+- Test set for final verification before deployment
+
+### On Base Case Methods
+
+**Q:** Which base case method is best?
+**A:** Depends on your data:
+- **Simple (B_3 = y_2 - y_1)**: Fast, uses minimal data
+- **Warm-up (average of 3 diffs)**: More robust, reduces noise
+- **Overall trend**: Best for very noisy data, uses longer period
+- **Recommendation**: Try all 3, pick one based on results
+
+---
+
+## Advanced Topics Covered (Updated)
+
+### Completed in This Session:
+- Single Exponential Smoothing (with parameter optimization)
+- Double Exponential Smoothing / Holt's Method
+- Triple Exponential Smoothing / Holt-Winters Method
+- Seasonality concepts and applications
 
 ### Yet to be covered:
-- Double Exponential Smoothing (with trend)
-- ARIMA models
-- Seasonality detection
+- ARIMA models (AR, I, MA components)
+- SARIMA (Seasonal ARIMA)
 - RNNs for time series
 - Transformer models
 
 ---
 
-## Summary Table
+## Comprehensive Model Summary Table
 
-| Model | Formula | Complexity | Use Case |
-|-------|---------|-----------|----------|
-| **Naive** | $\hat{y}_{t+1} = y_t$ | ⭐ | Stable data |
-| **Additive Trend** | $\hat{y}_{t+1} = y_t + (y_t - y_{t-1})$ | ⭐⭐ | Linear growth |
-| **Multiplicative Trend** | $\hat{y}_{t+1} = y_t \times \frac{y_t}{y_{t-1}}$ | ⭐⭐ | % growth |
-| **Simple Average** | $\hat{y}_{t+1} = \frac{1}{n}\sum y_i$ | ⭐ | Noisy data |
-| **Moving Average** | $\hat{y}_{t+1} = \frac{1}{k}\sum_{i=t-k+1}^{t} y_i$ | ⭐⭐ | Trending data |
-| **Exponential Smoothing** | $S_t = \alpha y_t + (1-\alpha)S_{t-1}$ | ⭐⭐⭐ | Weighted history |
+| Model | Formula | Parameters | Complexity | Use Case |
+|-------|---------|-----------|-----------|----------|
+| **Naive** | $\hat{y}_{t+1} = y_t$ | 0 | ⭐ | Very stable data |
+| **Additive Trend** | $\hat{y}_{t+1} = y_t + (y_t - y_{t-1})$ | 0 | ⭐⭐ | Linear growth |
+| **Multiplicative Trend** | $\hat{y}_{t+1} = y_t \times \frac{y_t}{y_{t-1}}$ | 0 | ⭐⭐ | % growth |
+| **Simple Average** | $\hat{y}_{t+1} = \frac{1}{n}\sum y_i$ | 0 | ⭐ | Noisy, stable data |
+| **Moving Average** | $\hat{y}_{t+1} = \frac{1}{k}\sum_{i=t-k+1}^{t} y_i$ | 1 (k) | ⭐⭐ | Recent trend emphasis |
+| **Single Exp. Smoothing** | $S_t = \alpha y_t + (1-\alpha)S_{t-1}$ | 1 (α) | ⭐⭐⭐ | Weighted history, stationary |
+| **Double Exp. Smoothing** | $S_t = \alpha y_t + (1-\alpha)(S_{t-1} + B_{t-1})$ | 2 (α, γ) | ⭐⭐⭐⭐ | Clear trend present |
+| **Triple Exp. Smoothing** | $(S_t + m \times B_t) \times I_{t+m-L}$ | 3 (α, γ, β) | ⭐⭐⭐⭐ | Seasonal trending data |
 
 ---
 
-**Last Updated**: Session timestamp 09:41:41 - 10:01:43  
-**Status**: Covers Introduction through Exponential Smoothing with Practical Examples  
-**Coverage**: ~56 minutes of lecture (09:05:52 - 10:01:43)  
-**Next Topics Expected**: Double Exponential Smoothing, ARIMA, Seasonality, RNNs
+**Last Updated**: Session timestamp 10:16:30 (Post-break continuation)  
+**Status**: Covers Introduction through Triple Exponential Smoothing (Holt-Winters) with Q&A  
+**Coverage**: ~71 minutes of lecture (09:05:52 - 10:37:30), including break  
+**Sections Added**: Double/Triple Exponential Smoothing, Seasonality, ARIMA Introduction  
+**Next Topics**: Detailed ARIMA modeling, RNNs, Transformer-based models
