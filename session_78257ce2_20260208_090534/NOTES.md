@@ -217,9 +217,11 @@ Both are ways of thinking about **trend** = How much the value is changing.
 #### **Model 2A: Additive Trend**
 
 **Formula:**
+
 $$\hat{y}_{t+1} = y_t + \left(y_t - y_{t-1}\right)$$
 
 Or equivalently:
+
 $$\hat{y}_{t+1} = y_t + \Delta y_t$$
 
 **Where:**
@@ -383,10 +385,56 @@ graph LR
 - **Larger k** (k=20): Smooth trends, lags changes
 - **Solution**: Test on validation set, pick k with best performance
 
+**Practical Example: 30-Week Purchase Data**
+
+**Timestamp: 09:37:12 - 09:39:11**
+
+Suppose you have 30 weeks of purchase data:
+
+```
+Week:       1    2    3  ...  28   29   30   31 (predict)
+Purchases: 285  290  275 ... 300  310  320   ?
+```
+
+**Step 1: Try Moving Average with k=5**
+
+For week 31, take the last 5 weeks (weeks 26-30):
+```
+Week 26: ~280
+Week 27: ~295
+Week 28: ~300
+Week 29: ~310
+Week 30: 320
+
+Moving Average = (280 + 295 + 300 + 310 + 320) / 5 = 289.8 purchases
+```
+
+**Step 2: Test Different Values of k**
+
+Try multiple k values on your validation data:
+```
+k=3:  Prediction with last 3 weeks   → MSE = X
+k=4:  Prediction with last 4 weeks   → MSE = Y
+k=5:  Prediction with last 5 weeks   → MSE = 289.8 ✓ (lowest)
+k=6:  Prediction with last 6 weeks   → MSE = Z
+k=10: Prediction with last 10 weeks  → MSE = W
+```
+
+**Step 3: Pick the k with Lowest Error**
+
+Whichever k gives the lowest MSE on validation set is the one you use for predictions.
+
+**Why Testing is Essential:**
+- Different data patterns favor different k values
+- Too small k → overfits to noise, jumpy predictions
+- Too large k → misses recent changes, slow to adapt
+- Optimal k balances responsiveness with stability
+
 **Limitations:**
-- ❌ Doesn't capture trends
+- ❌ Doesn't capture trends (all values averaged equally)
 - ❌ Doesn't capture seasonality (repeating patterns)
-- ✓ Better than simple average for data with trends
+- ✓ Better than simple average for recent-focused predictions
+- ✓ Practical for data that fluctuates around a stable level
 
 ---
 
@@ -570,6 +618,7 @@ Complexity    ↑
 
 ---
 
-**Last Updated**: Session timestamp 09:36:49 - 09:37:12  
-**Status**: Covers Introduction and Simple Models  
-**Next Session**: Exponential Smoothing, ARIMA, RNNs expected
+**Last Updated**: Session timestamp 09:37:12 - 09:39:11  
+**Status**: Covers Introduction through Moving Average with Practical Examples  
+**Coverage**: ~34 minutes of lecture (09:05:52 - 09:39:11)  
+**Next Topics Expected**: Seasonality, Exponential Smoothing, ARIMA, RNNs
