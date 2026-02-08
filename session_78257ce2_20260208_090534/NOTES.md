@@ -1444,8 +1444,434 @@ After break: Detailed ARIMA discussion covering:
 
 ---
 
-**Last Updated**: Session timestamp 10:16:30 (Post-break continuation)  
-**Status**: Covers Introduction through Triple Exponential Smoothing (Holt-Winters) with Q&A  
-**Coverage**: ~71 minutes of lecture (09:05:52 - 10:37:30), including break  
-**Sections Added**: Double/Triple Exponential Smoothing, Seasonality, ARIMA Introduction  
-**Next Topics**: Detailed ARIMA modeling, RNNs, Transformer-based models
+**Last Updated**: Complete lecture coverage including ARIMA and RNNs
+**Status**: Covers Introduction through RNN fundamentals with comprehensive Q&A  
+**Coverage**: ~215 minutes of lecture (09:05:52 - 12:41:44), including breaks  
+**Sections Added**: Double/Triple Exponential Smoothing, Seasonality, ARIMA Detailed, RNN Introduction  
+**Next Topics**: LSTMs, Transformers, Production deployment
+
+---
+
+## ARIMA Models: Advanced Statistical Forecasting
+
+**Timestamp: 10:36:16 - 11:32:04**
+
+### What is ARIMA?
+
+**ARIMA** stands for **Auto-Regressive Integrated Moving Average**
+
+Three components with parameters (p, d, q):
+
+#### 1. AR - Auto-Regressive (Parameter: p)
+
+**Formula:**
+$$y_t = \alpha_1 y_{t-1} + \alpha_2 y_{t-2} + ... + \alpha_p y_{t-p} + \epsilon_t$$
+
+**Interpretation:**
+- Current value = weighted combination of past p values
+- Exactly like linear regression with past values as features
+- Learn weights (α values) through training
+
+**Example (p=3):**
+- Use past 3 salaries to predict current salary
+- Each past value gets its own weight
+- More flexible than simple moving average
+
+#### 2. I - Integrated (Parameter: d)
+
+**What it does**: Number of differencing operations to make series stationary
+
+**Differencing levels:**
+- **d=0**: No differencing (already stationary)
+- **d=1**: First-order differencing: $y'_t = y_t - y_{t-1}$
+- **d=2**: Second-order differencing: Apply differencing twice
+
+**How to choose d:**
+1. Fit trend line to time series
+2. Calculate slope
+3. Apply differencing
+4. Fit trend line again
+5. If slope changes direction (pos→neg or neg→pos), stop
+6. Otherwise, continue differencing
+
+**Example:**
+```
+Original series: Slope = 3.93
+After d=1:       Slope = 1.02  
+After d=2:       Slope = 0.12
+After d=3:       Slope = -0.08  ← Stop! Direction changed
+Use d=2
+```
+
+#### 3. MA - Moving Average (Parameter: q)
+
+**Formula:**
+$$y_t = \beta_1 \epsilon_{t-1} + \beta_2 \epsilon_{t-2} + ... + \beta_q \epsilon_{t-q}$$
+
+**Important**: NOT literally moving average!
+
+**Interpretation:**
+- Models impact of **random shocks/events** on future values
+- ε represents hidden events (life changes, unexpected occurrences)
+- β weights represent how much past shocks affect future
+
+**Example:**
+- Having a baby (shock event) affects not just current year salary
+- Impact continues for several years
+- MA model captures this propagation
+
+### Five-Stage ARIMA Workflow
+
+```
+1. VISUALIZE → 2. STATIONIZE → 3. ACF/PACF PLOTS → 4. BUILD MODEL → 5. PREDICT
+```
+
+#### Stage 1: Visualize Time Series
+
+**Goal**: Identify patterns visually
+- Check for trend
+- Check for seasonality
+- Check for variance changes
+- Create "run sequence plot"
+
+#### Stage 2: Stationize the Series
+
+**Stationary Time Series Properties:**
+- ✅ **Constant mean** over time (no trend)
+- ✅ **Constant variance** over time (homoscedastic)
+- ✅ **Constant autocorrelation** structure
+
+**Non-Stationary Indicators:**
+- ❌ Mean changes (visible trend)
+- ❌ Variance changes (some periods more spread out)
+- ❌ Seasonality present
+
+**Stationization Methods:**
+
+1. **Detrending**: Fit linear/polynomial curve, subtract it
+   ```python
+   # Fit: y = mx + c
+   fitted_values = m * time + c
+   detrended = original - fitted_values
+   ```
+
+2. **Differencing**: Take differences between consecutive values
+   ```python
+   differenced = y[t] - y[t-1]
+   ```
+
+3. **Log/Square Root**: Reduce variance impact
+   ```python
+   log_series = np.log(original)
+   sqrt_series = np.sqrt(original)
+   ```
+
+4. **Seasonal Differencing**: Remove seasonality
+   ```python
+   # For weekly seasonality (L=7)
+   seasonal_diff = y[t] - y[t-7]
+   ```
+
+#### Stage 3: Plot ACF and PACF Charts
+
+**ACF (Autocorrelation Function)**:
+- Correlation between series and lagged version of itself
+- $$ACF(k) = corr(y_t, y_{t-k})$$
+- **Purpose**: Detect seasonality
+- **Visual**: Spikes at regular intervals indicate period
+
+**Example**: If spikes appear at lag=12, 24, 36 → Monthly seasonality (12 months)
+
+**PACF (Partial Autocorrelation Function)**:
+- Autocorrelation after removing effect of intermediate lags
+- More complex mathematically (uses regression)
+- **Purpose**: Determine AR and MA orders (p and q)
+
+**Parameter Selection Rules:**
+
+| ACF Shape | PACF Shape | Model | Parameters |
+|-----------|-----------|-------|-----------|
+| Exponential decay | Cuts off at lag p | AR(p) | Use PACF cutoff for p, q=0 |
+| Cuts off at lag q | Exponential decay | MA(q) | Use ACF cutoff for q, p=0 |
+| Exponential decay | Exponential decay | ARMA(p,q) | Both models needed |
+| Spikes at regular intervals | - | Seasonal | Need seasonal differencing |
+
+#### Stage 4: Build the Model
+
+**What "building" means:**
+- Train the ARIMA model with chosen (p, d, q)
+- Learn weights (α for AR, β for MA)
+- Estimate hidden shocks (ε values)
+- Use training data to fit parameters
+
+**Similar to**: Linear regression training
+- Minimize mean squared error
+- Use gradient descent or maximum likelihood
+- Backpropagation updates weights
+
+#### Stage 5: Make Predictions
+
+**Critical Step**: Reverse preprocessing!
+
+If you applied:
+1. Log transform → Apply exp()
+2. Square root → Square the result
+3. Differencing → Add back the differences
+4. Seasonal differencing → Add back seasonal component
+5. Detrending → Add back the trend
+
+**Example:**
+```python
+# Preprocessing
+differenced_series = original - original.shift(1)
+
+# After ARIMA prediction
+arima_prediction = model.forecast()
+
+# Reverse (add back)
+final_prediction = arima_prediction + original.iloc[-1]
+```
+
+### ARIMA Variants
+
+1. **ARIMAX**: Includes exogenous variables
+2. **S-ARIMA**: Seasonal ARIMA
+3. **V-ARIMA**: Vector ARIMA (multivariate)
+
+### When to Use ARIMA
+
+**✅ Best for:**
+- Limited data (10-100 points)
+- Need statistical interpretability
+- Single time series
+- Stationary or easily stationized data
+
+**❌ Not ideal for:**
+- Very long sequences (>1000 points)
+- Multivariate interdependent series
+- Highly non-linear patterns
+- Real-time/streaming applications
+
+---
+
+## Recurrent Neural Networks (RNNs)
+
+**Timestamp: 11:47:04 - 12:41:44 (End of lecture)**
+
+### Machine Learning Viewpoint
+
+**Key Shift**: Moving from statistical models to deep learning
+
+**Problem Formulation:**
+- Time series: [x₁, x₂, x₃, x₄, x₅, ...]
+- Create windows: Use x₁,x₂,x₃ → predict x₄
+- Each window = one training sample
+- Features = past k values
+
+**MLP Approach:**
+```
+Input Layer (3 nodes) → Hidden Layer → Output (1 node)
+[x₁, x₂, x₃]          → Processing  → x₄ prediction
+```
+
+**Limitation**: Sees all inputs simultaneously (parallel processing)
+
+### Why RNNs? Human-Like Sequential Processing
+
+**Human Reading Process:**
+1. Read "Narendra" → Form initial thought
+2. Read "Modi" → Update thought with new info
+3. Read "is" → Continue updating
+4. Read "the" → Keep building context
+5. Read "prime" → Predict next: "minister"
+
+**RNN Mimics This:**
+- Processes inputs **one at a time**
+- Maintains "memory" of what was seen
+- Updates memory at each step
+- More realistic for sequence understanding
+
+### RNN Architecture
+
+**At each time step t:**
+
+$$h_t = \tanh(W_1 \cdot x_t + W_2 \cdot h_{t-1})$$
+
+**Components:**
+- $x_t$: Current input (word/value at time t)
+- $h_{t-1}$: Previous memory/hidden state
+- $W_1$: Weights for processing input (shared across time)
+- $W_2$: Weights for updating memory (shared across time)
+- $h_t$: Updated memory/hidden state
+
+**Output Layer:**
+$$y_t = softmax(W_3 \cdot h_t)$$
+
+**Key Innovation: Weight Sharing**
+
+```
+Time 1: h₁ = f(W₁·x₁ + W₂·h₀)
+Time 2: h₂ = f(W₁·x₂ + W₂·h₁)  ← Same W₁, W₂!
+Time 3: h₃ = f(W₁·x₃ + W₂·h₂)  ← Same W₁, W₂!
+```
+
+**Benefits:**
+- ✅ Variable-length sequences (3 words or 100 words)
+- ✅ Fewer parameters than separate layers
+- ✅ Same model for different input lengths
+- ✅ Can process sequences of any size
+
+### RNN vs MLP: Key Differences
+
+| Aspect | MLP | RNN |
+|--------|-----|-----|
+| **Processing** | All inputs at once | Sequential, one-by-one |
+| **Memory** | None | Maintains hidden state |
+| **Weights** | Unique per layer | Shared across time |
+| **Input Length** | Fixed | Variable |
+| **Sequence Modeling** | Poor | Excellent |
+
+### The Vanishing/Exploding Gradient Problem
+
+**Core Issue**: Information from distant past gets distorted
+
+**Vanishing Gradients:**
+- Multiplying by W₂ repeatedly makes old information fade
+- Like multiplying $0.5 \times 0.5 \times 0.5 \times ... $ → approaches 0
+- **Example**: "Spain and France ... were two countries"
+  - Need to remember "Spain and France" from far back
+  - RNN forgets it by the time we reach "countries"
+
+**Exploding Gradients:**
+- If W₂ values > 1, repeated multiplication explodes
+- Like compound interest: $1.1 \times 1.1 \times 1.1 \times ...$ → infinity
+- Causes numerical instability
+
+**When It Matters:**
+- ❌ **Long sequences** (>50 steps): Information loss significant
+- ✅ **Short sequences** (<10 steps): Works well
+
+**Solution**: LSTMs (Long Short-Term Memory)
+- Adds controllable memory gates
+- Can selectively remember/forget
+- Not covered in this lecture
+
+### Multivariate Time Series with RNNs
+
+**Problem Setup:**
+```
+Time Point 1: [value₁_series₁, value₁_series₂, ..., value₁_seriesₙ]
+Time Point 2: [value₂_series₁, value₂_series₂, ..., value₂_seriesₙ]
+...
+Predict Time Point t+1: [value_{t+1}_series₁, ..., value_{t+1}_seriesₙ]
+```
+
+**Example**: System monitoring
+- CPU usage time series
+- Memory usage time series  
+- Disk I/O time series
+- All interdependent
+
+**RNN Advantage**: Can model dependencies between series
+
+**Alternative for Multivariate**: V-ARIMA (Vector ARIMA)
+
+### Text Analogy: Why It Helps Understanding
+
+**Time Series Vector** ≈ **Word Embedding**
+
+Both are:
+- Sequences of vectors
+- Order matters critically
+- Next prediction based on history
+- Same mathematics apply
+
+**Example Parallel:**
+```
+Time Series:     [stock_day1, stock_day2, stock_day3] → predict day4
+Text Sequence:   [word1, word2, word3] → predict word4
+```
+
+### Training RNNs
+
+**Backpropagation Through Time (BPTT):**
+1. Forward pass: Process entire sequence
+2. Calculate loss at output
+3. Backpropagate through all time steps
+4. Update W₁, W₂, W₃
+5. Average weight updates across time steps
+6. Apply to maintain shared weights
+
+**Training Requirements:**
+- Hundreds to thousands of samples
+- Variable-length sequences OK
+- Each sample: input sequence + target
+
+### Real-World Application: WhatsApp Next-Word Prediction
+
+**Requirements:**
+- **Ultra-low latency**: Must predict faster than typing (< 50ms)
+- **Limited compute**: Mobile device
+- **Short sequences**: Users rarely type >10 words at once
+
+**Why RNN (not Transformer)?**
+- ✅ Lightweight (few million parameters)
+- ✅ Fast inference
+- ✅ Perfect for short sequences
+- ❌ Transformers too slow/heavy for this use case
+
+**Contrast: Document Summarization**
+- Long sequences (1000+ words)
+- Accuracy > speed
+- Use Transformers (BERT, GPT)
+
+### Model Selection Summary
+
+```mermaid
+graph TD
+    A{Data Size?} -->|Small <100| B[Statistical Models]
+    A -->|Medium 100-1000| C[RNN/LSTM]
+    A -->|Large >1000| D[Transformers]
+    
+    B --> B1[ARIMA]
+    B --> B2[Exp. Smoothing]
+    
+    C --> C1{Sequence Length?}
+    C1 -->|Short <50| C2[RNN]
+    C1 -->|Long >50| C3[LSTM]
+    
+    D --> D1[BERT/GPT]
+    D --> D2[Time Series Transformers]
+```
+
+### Key Takeaways: RNNs
+
+1. **Sequential Processing**: Mimics human reading, not parallel
+2. **Weight Sharing**: Same weights across all time steps
+3. **Hidden State**: Memory of what was seen so far
+4. **Variable Length**: Can handle different sequence sizes
+5. **Vanishing Gradients**: Problem for long sequences (use LSTM)
+6. **Multivariate**: Can model interdependent time series
+7. **Trade-offs**: Better than ARIMA for large data, worse than Transformers for very long sequences
+
+### Production Considerations
+
+**When to Deploy RNNs:**
+- Real-time applications (low latency required)
+- Short-to-medium sequences
+- Mobile/edge devices (resource constraints)
+- Multiple time series with dependencies
+
+**When to Use Alternatives:**
+- **ARIMA**: Small data, interpretability needed
+- **LSTM**: Long sequences, vanishing gradient issues
+- **Transformers**: State-of-the-art accuracy, computational resources available
+
+---
+
+**End of Lecture: 12:41:44**
+
+**Total Duration**: ~3 hours 35 minutes of content  
+**Topics Covered**: Naive forecasting → RNN fundamentals  
+**Models Demonstrated**: 8 statistical models + RNN introduction  
+**Next Session Topics**: LSTMs, Attention Mechanisms, Transformers for Time Series
