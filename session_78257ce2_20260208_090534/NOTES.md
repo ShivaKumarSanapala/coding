@@ -217,7 +217,7 @@ Both are ways of thinking about **trend** = How much the value is changing.
 #### **Model 2A: Additive Trend**
 
 **Formula:**
-$$\hat{y}_{t+1} = y_t + (y_t - y_{t-1})$$
+$$\hat{y}_{t+1} = y_t + \left(y_t - y_{t-1}\right)$$
 
 Or equivalently:
 $$\hat{y}_{t+1} = y_t + \Delta y_t$$
