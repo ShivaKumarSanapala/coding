@@ -409,6 +409,17 @@ Week 30: 320
 Moving Average = (280 + 295 + 300 + 310 + 320) / 5 = 289.8 purchases
 ```
 
+**Calculation Breakdown:**
+- Simply add the 5 most recent purchase values
+- Divide by 5 (or k in general)
+- Result: 289.8 is your forecast for week 31
+
+**Understanding the Residual:**
+- Actual purchase in week 31: 268
+- Predicted: 289.8
+- Residual: 268 - 289.8 = -21.8
+- This negative residual tells you the model overestimated
+
 **Step 2: Test Different Values of k**
 
 Try multiple k values on your validation data:
@@ -422,19 +433,29 @@ k=10: Prediction with last 10 weeks  → MSE = W
 
 **Step 3: Pick the k with Lowest Error**
 
-Whichever k gives the lowest MSE on validation set is the one you use for predictions.
+Calculate MSE for each k:
+1. Make prediction for each time point using that k
+2. Calculate squared error: $(y_t - \hat{y}_t)^2$ for each point
+3. Average all squared errors → MSE
+4. **Pick the k with the lowest MSE**
 
 **Why Testing is Essential:**
 - Different data patterns favor different k values
-- Too small k → overfits to noise, jumpy predictions
-- Too large k → misses recent changes, slow to adapt
+- Too small k (k=2) → overfits to noise, jumpy predictions
+- Too large k (k=20) → misses recent changes, slow to adapt
 - Optimal k balances responsiveness with stability
+- **Example**: If k=5 gives MSE=2500 but k=3 gives MSE=2800, use k=5
 
 **Limitations:**
-- ❌ Doesn't capture trends (all values averaged equally)
+- ❌ Doesn't capture trends (all values averaged equally with equal weight)
 - ❌ Doesn't capture seasonality (repeating patterns)
+- ❌ Gives **zero weight** to data older than k periods (unlike exponential smoothing)
 - ✓ Better than simple average for recent-focused predictions
 - ✓ Practical for data that fluctuates around a stable level
+- ✓ Easy to understand and implement
+
+**Key Insight from Lecture:**
+> "Moving Average doesn't handle trend. If I'm just taking an average, I am not capturing that hike business at all. It just cares about the latest few values, the latest k values, and that's about it."
 
 ---
 
@@ -731,28 +752,199 @@ graph TD
 - Detect unusual patterns
 - Enable predictive maintenance before failure
 
-### Q2: Where do you get the data?
-**A**: Multiple sources:
-- **HR Systems**: SuccessFactors, Workday (employee data)
-- **Sensors**: Medical devices, cars, fitness trackers (10+ sensors each)
-- **APIs**: Stock market data (Yahoo Finance, Alpha Vantage)
-- **IoT**: Smart buildings, industrial equipment
+### On Data Sources and Collection
 
-### Q3: How to calculate y(t+2) without actual value?
-**A**: Use estimated value recursively:
-$$\hat{y}_{t+2} = \frac{t \times \hat{y}_{t+1}}{t+1}$$
-(Once actual value arrives, update incrementally)
+**Q: Where do you get time series data?**
+**A**: Multiple sources are available:
 
-### Q4: How is time series different from linear regression?
-**A**: They're **similar**:
+**Enterprise Systems:**
+- **HR Systems**: SuccessFactors, Workday (employee salary, hiring trends)
+- **CRM Systems**: Salesforce (daily sales, customer interactions)
+- **ERP Systems**: SAP (inventory, supply chain metrics)
+
+**Sensor Data:**
+- **Medical**: Thermometers, heart monitors, refrigerators (100+ sensors per device)
+- **Automotive**: Cars have hundreds of sensors (speed, temperature, fuel consumption)
+- **Fitness**: Fitbits and smartwatches (continuous health metrics)
+- **IoT**: Smart buildings, industrial equipment, environmental monitors
+
+**Public/API Sources:**
+- **Stock Market**: Yahoo Finance, Alpha Vantage APIs (real-time pricing)
+- **Weather**: National weather services (temperature, precipitation, wind)
+- **Economic**: Central banks, government statistics (GDP, inflation, unemployment)
+- **Social**: Social media trends, search interest (Google Trends)
+
+**Practical Workflow (as mentioned by Vinod):**
+1. Extract data from enterprise system (e.g., SuccessFactors)
+2. "Slice and dice" - aggregate/filter as needed
+3. Split into train/validation/test sets
+4. Fit models and evaluate
+5. Determine output types (forecast, anomaly, etc.)
+
+**Key Point:**
+> "There is so much of time series data available. The challenge is not finding data, but knowing how to process and forecast it effectively."
+
+---
+
+### On Incremental Updates and Efficiency
+
+**Q: Why use incremental update formula for simple average?**
+**A**: 
+- Efficiency for long time series (100k+ points)
+- Recalculating entire sum each time is wasteful
+- Incremental formula: $\hat{y}_{t+2} = \frac{t \times \hat{y}_{t+1} + y_{t+1}}{t+1}$
+
+**Efficiency Comparison:**
+
+**Naive Approach (Recalculate every time):**
+```
+For t=1 to n:
+  Sum = y[1] + y[2] + ... + y[t]      # O(t) operations
+  Average = Sum / t
+Result: O(n²) total time
+```
+
+**Incremental Approach:**
+```
+For t=1 to n:
+  Average = (t × PreviousAverage + y[t]) / (t+1)  # O(1) operations
+Result: O(n) total time
+```
+
+**Real-World Impact:**
+- Million data points: Incremental is 1M times faster
+- Used in streaming applications (continuous data)
+- Essential for real-time forecasting systems
+
+**Trade-off:** 
+- Slightly more complex formula
+- Huge efficiency gains
+- Critical for production systems
+
+---
+
+### On the Nature of Time Series vs Linear Regression
+
+**Q4: How is time series different from linear regression?**
+**A**: They're **similar but different**:
+
+**Similarity:**
 - Can view previous time points as features in regression
-- Regress on future value
+- Regress future value on past values
+- Both predict continuous numbers
 
-**Key Difference**:
-- Linear regression needs many independent samples (n >> features)
-- Time series can work with few data points using domain knowledge
-- 10 years salary = 10 samples for linear regression = too few
-- But time series models handle this well
+**Key Difference:**
+- **Linear Regression**: Needs many independent samples (n >> number of features)
+  - Example: 10 years salary = 10 samples = TOO FEW for linear regression
+  - With 10 samples and multiple features, overfitting is guaranteed
+  
+- **Time Series Models**: Handle small datasets well using domain knowledge
+  - Example: 10 years salary = 10 samples = WORKABLE for time series
+  - Simple models (Moving Average, Exponential Smoothing) don't require many samples
+  - Use temporal structure instead of statistical assumptions
+
+**Why This Matters:**
+- Most business data is time series format (daily sales, hourly traffic, etc.)
+- You can't just use linear regression on raw time series
+- Time series methods are specifically designed for dependent, ordered data
+
+**Insight from Lecture:**
+> "Linear regression is a great model because it can learn weights, rather than resetting them to equal weights. But it works well when you have lots of data. When all you have is 10 salary numbers, you can't use linear regression there."
+
+---
+
+## Additional Q&A from Exponential Smoothing Session
+
+**Timestamp: 09:41:41 - 10:01:43** (Additional clarifications)
+
+### On Understanding the Weight Distribution
+
+**Key Concept: Exponentially Decreasing Weights**
+
+The exponential smoothing formula creates weights that decrease exponentially:
+
+**Expansion Example with α = 0.9:**
+$$S_t = 0.9 y_t + 0.09 y_{t-1} + 0.009 y_{t-2} + ...$$
+
+- $y_t$ coefficient: 0.9 (90% weight)
+- $y_{t-1}$ coefficient: 0.9 × 0.1 = 0.09 (9% weight)
+- $y_{t-2}$ coefficient: 0.9 × 0.1 × 0.1 = 0.009 (0.9% weight)
+- Continues exponentially decreasing...
+
+**With α = 0.5 (slower dampening):**
+- $y_t$ coefficient: 0.5 (50% weight)
+- $y_{t-1}$ coefficient: 0.5 × 0.5 = 0.25 (25% weight)
+- $y_{t-2}$ coefficient: 0.5 × 0.5 × 0.5 = 0.125 (12.5% weight)
+- Still decreases, but more slowly
+
+**Why Always Decreasing?**
+When you multiply by a number less than 1 (whether 0.1 or 0.9), it always dampens. The parameter α controls the *rate* of dampening, not the *direction*.
+
+### On Parameter Optimization Process
+
+**Complete Grid Search Methodology:**
+
+**Phase 1: Coarse Grid**
+1. Test α = 0.1, 0.2, 0.3, ..., 0.9 (9 values)
+2. Calculate MSE for each
+3. Identify which range contains the best α
+4. Proceed to Phase 2
+
+**Phase 2: Fine Grid (if needed)**
+1. Around best coarse value (e.g., if 0.5 was best, try 0.45-0.55)
+2. Test at finer granularity: 0.45, 0.46, 0.47, ..., 0.55
+3. Find the best fine value
+4. Can proceed to Phase 3 for even finer tuning
+
+**Phase 3: Ultra-Fine Grid (optional)**
+1. Around best fine value (e.g., if 0.52 was best, try 0.515-0.525)
+2. Test at even finer granularity: 0.515, 0.516, ..., 0.525
+3. Select optimal α
+
+**Why Multi-Phase?**
+- Avoids testing 100+ values in the coarse phase
+- Efficiently narrows down to optimal range
+- Computationally efficient
+- Practical for business applications
+
+### On Training Data and Validation
+
+**Q: What is "Training Data"?**
+**A**: 
+- Simply the **observed time series values so far**
+- Not "trained" in ML sense
+- Just the historical data you have
+- You use it to build/fit your model
+
+**Q: How do we validate if we don't have future values?**
+**A**: 
+- You **do have** future values during training phase
+- Use historical data you've already observed
+- Split your past data: Train → Validation → Test
+- Example: 10 years of salary
+  - Years 1-7: Training set
+  - Years 8-9: Validation set
+  - Year 10: Test set
+
+**Why This Works:**
+- You're not predicting into the future during validation
+- You're testing on data you already know the answer for
+- This shows if your model generalizes well to new patterns
+
+### On Model Limitations
+
+**Q: Does exponential smoothing capture trend?**
+**A**: 
+- Partially/implicitly - yes
+- Explicitly - NO
+- Single exponential gives high weight to recent values
+- But it doesn't **explicitly** model trend component
+- Solution: Use Double Exponential Smoothing (next method)
+
+**Comparison:**
+- Single Exponential: Implicit trend (recent emphasis)
+- Double Exponential: Explicit trend (separate B_t component)
+- Triple Exponential: Explicit trend + seasonality
 
 ---
 
